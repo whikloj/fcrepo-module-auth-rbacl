@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.fcrepo</groupId>
     <artifactId>fcrepo</artifactId>
-    <version>4.0.0-beta-02-SNAPSHOT</version>
+    <version>4.0.0-beta-02</version>
   </parent>
   <artifactId>fcrepo-module-auth-rbacl</artifactId>
   <packaging>pom</packaging>
@@ -30,7 +29,7 @@
     <developerConnection>scm:git:git@github.com:fcrepo4/${project.artifactId}.git
     </developerConnection>
     <url>https://github.com/fcrepo4/fcrepo-module-auth-rbacl</url>
-    <tag>HEAD</tag>
+    <tag>fcrepo-module-auth-rbacl-4.0.0-beta-02</tag>
   </scm>
 
   <modules>
@@ -68,12 +67,12 @@
       <dependency>
         <groupId>org.fcrepo</groupId>
         <artifactId>fcrepo-http-api</artifactId>
-        <version>${project.version}</version>
+        <version>4.0.0-beta-02</version>
       </dependency>
       <dependency>
         <groupId>org.fcrepo</groupId>
         <artifactId>fcrepo-auth-common</artifactId>
-        <version>${project.version}</version>
+        <version>4.0.0-beta-02</version>
       </dependency>
       <dependency>
         <groupId>org.fcrepo</groupId>
@@ -127,18 +126,18 @@
       <dependency>
         <groupId>org.fcrepo</groupId>
         <artifactId>fcrepo-http-commons</artifactId>
-        <version>${project.version}</version>
+        <version>4.0.0-beta-02</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.fcrepo</groupId>
         <artifactId>fcrepo-configs</artifactId>
-        <version>${project.version}</version>
+        <version>4.0.0-beta-02</version>
       </dependency>
       <dependency>
         <groupId>org.fcrepo</groupId>
         <artifactId>fcrepo-kernel-impl</artifactId>
-        <version>${project.version}</version>
+        <version>4.0.0-beta-02</version>
         <classifier>tests</classifier>
       </dependency>
       <dependency>
