@@ -34,6 +34,7 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 
 import org.fcrepo.http.commons.session.SessionFactory;
+import org.fcrepo.kernel.exception.RepositoryRuntimeException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -89,12 +90,10 @@ public class AccessRolesTypesTest {
         when(sessionFactory.getInternalSession()).thenReturn(session);
     }
 
-    @Test(expected = RepositoryException.class)
-    public void testSetupRepoConfigGetSessionException()
-            throws RepositoryException,
-            IOException {
+    @Test(expected = RepositoryRuntimeException.class)
+    public void testSetupRepoConfigGetSessionException() throws Exception {
         when(sessionFactory.getInternalSession()).thenThrow(
-                new RepositoryException());
+                new RepositoryRuntimeException("expected"));
 
         try {
             accessRolesTypes.setUpRepositoryConfiguration();
@@ -106,9 +105,9 @@ public class AccessRolesTypesTest {
         }
     }
 
-    @Test(expected = RepositoryException.class)
+    @Test(expected = RepositoryRuntimeException.class)
     public void testSetupRepoConfigGetNodeTypeManagerException()
-            throws RepositoryException, IOException {
+            throws Exception {
         when(workspace.getNodeTypeManager()).thenThrow(
                 new RepositoryException());
 

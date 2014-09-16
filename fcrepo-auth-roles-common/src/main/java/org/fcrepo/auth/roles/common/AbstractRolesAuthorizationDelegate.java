@@ -24,7 +24,6 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -172,12 +171,8 @@ public abstract class AbstractRolesAuthorizationDelegate implements FedoraAuthor
                 final Node n = ni.nextNode();
                 // are there unique roles?
                 final Set<String> roles;
-                Map<String, List<String>> acl = null;
-                try {
-                    acl = accessRolesProvider.getRoles(n, false);
-                } catch (final PathNotFoundException ignored) {
-                    LOGGER.trace("Path not found when removing roles", ignored);
-                }
+                final Map<String, List<String>> acl = accessRolesProvider.getRoles(n, false);
+
                 if (acl != null) {
                     roles = resolveUserRoles(acl, allPrincipals);
                 } else {

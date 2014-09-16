@@ -25,6 +25,7 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 
 import org.fcrepo.http.commons.session.SessionFactory;
+import org.fcrepo.kernel.exception.RepositoryRuntimeException;
 import org.modeshape.jcr.api.nodetype.NodeTypeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,13 +52,11 @@ public class AccessRolesTypes {
      * @throws IOException
      */
     @PostConstruct
-    public void setUpRepositoryConfiguration() throws RepositoryException,
-            IOException {
+    public void setUpRepositoryConfiguration() throws IOException {
         registerNodeTypes(sessionFactory);
     }
 
-    private void registerNodeTypes(final SessionFactory sessions)
-        throws RepositoryException, IOException {
+    private void registerNodeTypes(final SessionFactory sessions) throws IOException {
         Session session = null;
         try {
             session = sessions.getInternalSession();
@@ -75,6 +74,9 @@ public class AccessRolesTypes {
             }
             session.save();
             LOGGER.debug("Registered access role node types");
+
+        } catch (final RepositoryException e) {
+            throw new RepositoryRuntimeException(e);
         } finally {
             if (session != null) {
                 session.logout();

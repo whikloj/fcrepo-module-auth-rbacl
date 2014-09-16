@@ -92,9 +92,8 @@ public class AccessRoles extends AbstractResource {
     @GET
     @Produces(APPLICATION_JSON)
     @Timed
-    public Response get(@PathParam("path")
-        final List<PathSegment> pathList, @QueryParam("effective")
-        final String effective) throws RepositoryException {
+    public Response get(@PathParam("path") final List<PathSegment> pathList,
+                        @QueryParam("effective") final String effective) {
         final String path = toPath(pathList);
         LOGGER.debug("Get access roles for: {}", path);
         LOGGER.debug("effective: {}", effective);

@@ -46,6 +46,7 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 
 import org.fcrepo.kernel.FedoraResource;
+import org.fcrepo.kernel.exception.RepositoryRuntimeException;
 import org.fcrepo.kernel.services.NodeService;
 import org.junit.Before;
 import org.junit.Test;
@@ -141,11 +142,11 @@ public class AccessRolesTest {
         verify(accessRolesProvider).getRoles(any(Node.class), anyBoolean());
     }
 
-    @Test(expected = RepositoryException.class)
-    public void testGetException() throws RepositoryException {
+    @Test(expected = RepositoryRuntimeException.class)
+    public void testGetException() {
 
         when(nodeService.getObject(any(Session.class), anyString())).thenThrow(
-                new RepositoryException());
+                new RepositoryRuntimeException("expected"));
 
         try {
             accessRoles.get(paths, "");

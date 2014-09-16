@@ -26,6 +26,7 @@ import org.fcrepo.http.commons.api.rdf.UriAwareResourceModelFactory;
 import org.fcrepo.jcr.FedoraJcrTypes;
 import org.fcrepo.kernel.FedoraResource;
 import org.fcrepo.kernel.RdfLexicon;
+import org.fcrepo.kernel.exception.RepositoryRuntimeException;
 import org.fcrepo.kernel.rdf.IdentifierTranslator;
 import org.springframework.stereotype.Component;
 
@@ -49,18 +50,22 @@ public class AccessRolesResources implements UriAwareResourceModelFactory {
      */
     @Override
     public Model createModelForResource(final FedoraResource resource,
-            final UriInfo uriInfo, final IdentifierTranslator graphSubjects)
-        throws RepositoryException {
+            final UriInfo uriInfo, final IdentifierTranslator graphSubjects) {
         final Model model = ModelFactory.createDefaultModel();
-        final Resource s = graphSubjects.getSubject(resource.getNode().getPath());
 
-        if (resource.getNode().isNodeType(
-                FedoraJcrTypes.FEDORA_RESOURCE)) {
-            final Map<String, String> pathMap =
-                    singletonMap("path", resource.getPath().substring(1));
-            final Resource acl = model.createResource(uriInfo.getBaseUriBuilder().path(
-                    AccessRoles.class).buildFromMap(pathMap).toASCIIString());
-            model.add(s, RdfLexicon.HAS_ACCESS_ROLES_SERVICE, acl);
+        try {
+            final Resource s = graphSubjects.getSubject(resource.getNode().getPath());
+
+            if (resource.getNode().isNodeType(
+                    FedoraJcrTypes.FEDORA_RESOURCE)) {
+                final Map<String, String> pathMap =
+                        singletonMap("path", resource.getPath().substring(1));
+                final Resource acl = model.createResource(uriInfo.getBaseUriBuilder().path(
+                        AccessRoles.class).buildFromMap(pathMap).toASCIIString());
+                model.add(s, RdfLexicon.HAS_ACCESS_ROLES_SERVICE, acl);
+            }
+        } catch (final RepositoryException e) {
+            throw new RepositoryRuntimeException(e);
         }
         return model;
     }

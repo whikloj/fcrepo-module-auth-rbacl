@@ -30,6 +30,7 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.fcrepo.auth.roles.common.Constants.JcrName;
+import org.fcrepo.kernel.exception.RepositoryRuntimeException;
 import org.modeshape.jcr.value.Path;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
@@ -66,34 +67,39 @@ public class AccessRolesProvider {
      * @param effective if true then search for effective roles
      * @return a set of roles for each principal
      */
-    public Map<String, List<String>> getRoles(final Node node, final boolean effective) throws RepositoryException {
+    public Map<String, List<String>> getRoles(final Node node, final boolean effective) {
         final Map<String, List<String>> data = new HashMap<>();
-        final Session session = node.getSession();
-        registerPrefixes(session);
-        if (node.isNodeType(rbaclAssignable.getQualified())) {
-            getAssignments(node, data);
-            return data;
-        }
-        if (effective) { // look up the tree
-            try {
-                for (Node n = node.getParent(); n != null; n = n.getParent()) {
-                    if (n.isNodeType(rbaclAssignable.getQualified())) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("effective roles are assigned at node: {}", n.getPath());
-                        }
-                        getAssignments(n, data);
-                        if (LOGGER.isDebugEnabled()) {
-                            for (final Map.Entry<String, List<String>> entry : data.entrySet()) {
-                                LOGGER.debug("{} has role(s) {}", entry.getKey(), entry.getValue());
-                            }
-                        }
-                        return data;
-                    }
-                }
-            } catch (final ItemNotFoundException e) {
-                LOGGER.trace("Subject not found, using default access roles", e);
-                return DEFAULT_ACCESS_ROLES;
+        try {
+
+            final Session session = node.getSession();
+            registerPrefixes(session);
+            if (node.isNodeType(rbaclAssignable.getQualified())) {
+                getAssignments(node, data);
+                return data;
             }
+            if (effective) { // look up the tree
+                try {
+                    for (Node n = node.getParent(); n != null; n = n.getParent()) {
+                        if (n.isNodeType(rbaclAssignable.getQualified())) {
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("effective roles are assigned at node: {}", n.getPath());
+                            }
+                            getAssignments(n, data);
+                            if (LOGGER.isDebugEnabled()) {
+                                for (final Map.Entry<String, List<String>> entry : data.entrySet()) {
+                                    LOGGER.debug("{} has role(s) {}", entry.getKey(), entry.getValue());
+                                }
+                            }
+                            return data;
+                        }
+                    }
+                } catch (final ItemNotFoundException e) {
+                    LOGGER.trace("Subject not found, using default access roles", e);
+                    return DEFAULT_ACCESS_ROLES;
+                }
+            }
+        } catch (final RepositoryException e) {
+            throw new RepositoryRuntimeException(e);
         }
         return null;
     }
