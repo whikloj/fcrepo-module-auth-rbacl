@@ -22,7 +22,7 @@
   
   <bean name="fad" class="org.fcrepo.auth.roles.basic.BasicRolesAuthorizationDelegate"/>
 
-  <bean class="org.modeshape.jcr.JcrRepositoryFactory" />
+    <bean class="org.modeshape.jcr.ModeShapeEngine" init-method="start"/>
 
   <bean id="connectionManager" class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager" />
 
