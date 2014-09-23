@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -41,13 +42,11 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.fcrepo.http.commons.AbstractResource;
-import org.fcrepo.http.commons.session.InjectedSession;
 import org.fcrepo.kernel.FedoraResource;
+import org.jvnet.hk2.annotations.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import com.codahale.metrics.annotation.Timed;
 
@@ -57,7 +56,6 @@ import com.codahale.metrics.annotation.Timed;
  * @author Gregory Jansen
  * @since Sep 5, 2013
  */
-@Component
 @Scope("prototype")
 @Path("/{path: .*}/fcr:accessroles")
 public class AccessRoles extends AbstractResource {
@@ -65,11 +63,12 @@ public class AccessRoles extends AbstractResource {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(AccessRoles.class);
 
-    @InjectedSession
+    @Inject
     protected Session session;
 
-    @Autowired
-    private AccessRolesProvider accessRolesProvider = null;
+    @Inject
+    @Optional
+    private AccessRolesProvider accessRolesProvider;
 
     @Context
     protected HttpServletRequest request;
