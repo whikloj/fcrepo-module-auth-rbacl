@@ -145,8 +145,8 @@ public abstract class AbstractRolesIT {
     public int canAddDS(final String username, final String path,
             final String dsName, final boolean is_authenticated)
                     throws IOException {
-        final HttpPost method =
-                postDSMethod(path, dsName, "This is the datastream contents.");
+        final HttpPut method =
+                putDSMethod(path, dsName, "This is the datastream contents.");
         if (is_authenticated) {
             setAuth(method, username);
         }
@@ -469,8 +469,8 @@ public abstract class AbstractRolesIT {
         for (final Map<String, String> entries : obj.getDatastreams()) {
             for (final Map.Entry<String, String> entry : entries.entrySet()) {
                 final String dsid = entry.getKey();
-                final HttpPost method =
-                        postDSMethod(obj.getPath(), dsid, entry.getValue());
+                final HttpPut method =
+                        putDSMethod(obj.getPath(), dsid, entry.getValue());
                 setAuth(method, "fedoraAdmin");
                 final HttpResponse response = client.execute(method);
                 final String content =
