@@ -279,26 +279,11 @@ public abstract class AbstractRolesIT {
     protected HttpPut putDSMethod(final String objectPath, final String ds,
             final String content) throws UnsupportedEncodingException {
         final HttpPut put =
-                new HttpPut(serverAddress + objectPath + "/" + ds +
-                        "/fcr:content");
+                new HttpPut(serverAddress + objectPath + "/" + ds);
         put.setEntity(new StringEntity(content));
         logger.debug("PUT: {}", put.getURI());
         return put;
     }
-
-
-
-    protected HttpPost postDSMethod(final String objectPath,
-            final String ds, final String content)
-                    throws UnsupportedEncodingException {
-        final HttpPost post =
-                new HttpPost(serverAddress + objectPath + "/" + ds +
-                        "/fcr:content");
-        post.setEntity(new StringEntity(content));
-        return post;
-    }
-
-
 
     protected HttpPost postRolesMethod(final String param) {
         final HttpPost post =

@@ -16,7 +16,6 @@
 package org.fcrepo.auth.roles.common;
 
 import static org.fcrepo.http.commons.test.util.TestHelpers.mockSession;
-import static org.fcrepo.http.commons.test.util.TestHelpers.setField;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
@@ -27,9 +26,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,9 +39,9 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.PathSegment;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import org.fcrepo.kernel.FedoraResource;
@@ -63,7 +62,7 @@ public class AccessRolesTest {
     private AccessRolesProvider accessRolesProvider;
 
     @Mock
-    private HttpServletRequest request;
+    private Request request;
 
     @Mock
     private NodeService nodeService;
@@ -74,8 +73,6 @@ public class AccessRolesTest {
     @Mock
     private Map<String, List<String>> rolesData;
 
-    private List<PathSegment> paths;
-
     @Mock
     private PathSegment rootPath;
 
@@ -83,22 +80,24 @@ public class AccessRolesTest {
 
     private AccessRoles accessRoles;
 
+    @Mock
+    private javax.jcr.Node mockNode;
+
     @Before
     public void setUp() throws RepositoryException {
         initMocks(this);
-        accessRoles = new AccessRoles();
+        accessRoles = new AccessRoles("/some/path");
         setField(accessRoles, "accessRolesProvider", accessRolesProvider);
         setField(accessRoles, "request", request);
         setField(accessRoles, "nodeService", nodeService);
         session = mockSession(accessRoles);
         setField(accessRoles, "session", session);
 
+        when(session.getNode("/some/path")).thenReturn(mockNode);
+
         when(nodeService.getObject(any(Session.class), anyString()))
                 .thenReturn(fedoraResource);
 
-        paths = new ArrayList<>();
-        when(rootPath.getPath()).thenReturn("");
-        paths.add(rootPath);
     }
 
     @Test
@@ -107,7 +106,7 @@ public class AccessRolesTest {
         when(accessRolesProvider.getRoles(any(Node.class), anyBoolean()))
                 .thenReturn(null);
 
-        final Response response = accessRoles.get(paths, null);
+        final Response response = accessRoles.get(null);
 
         assertEquals("NoContent response expected when no data found", Response
                 .noContent().build().getStatus(), response.getStatus());
@@ -127,7 +126,7 @@ public class AccessRolesTest {
         when(accessRolesProvider.getRoles(any(Node.class), anyBoolean()))
                 .thenReturn(rolesData);
 
-        final Response response = accessRoles.get(paths, "");
+        final Response response = accessRoles.get("");
 
         assertEquals("Expecting OK response",
                 Response.ok().build().getStatus(), response.getStatus());
@@ -143,13 +142,13 @@ public class AccessRolesTest {
     }
 
     @Test(expected = RepositoryRuntimeException.class)
-    public void testGetException() {
+    public void testGetException() throws RepositoryException {
 
-        when(nodeService.getObject(any(Session.class), anyString())).thenThrow(
+        when(session.getNode("/some/path")).thenThrow(
                 new RepositoryRuntimeException("expected"));
 
         try {
-            accessRoles.get(paths, "");
+            accessRoles.get("");
         } finally {
             // Verify that session logout occurred and no work happened
             verify(session).logout();
@@ -220,7 +219,7 @@ public class AccessRolesTest {
             throws RepositoryException {
 
         try {
-            accessRoles.post(paths, data);
+            accessRoles.post(data);
         } finally {
             // Verify that no work with the provider happened
             verify(accessRolesProvider, never()).postRoles(any(Node.class),
@@ -241,7 +240,7 @@ public class AccessRolesTest {
 
         data.put("principalName", roles);
 
-        final Response response = accessRoles.post(paths, data);
+        final Response response = accessRoles.post(data);
 
         // Check that work was called
         verify(accessRolesProvider).postRoles(any(Node.class),
@@ -251,7 +250,7 @@ public class AccessRolesTest {
 
         assertEquals("Status code must be CREATED", 201, response.getStatus());
         assertEquals("Response path should reference accessroles",
-                "/fcrepo/fcr:accessroles", ((URI) response.getMetadata()
+                "/fcrepo/some/path/fcr:accessroles", ((URI) response.getMetadata()
                         .getFirst("Location")).getPath());
     }
 
@@ -267,7 +266,7 @@ public class AccessRolesTest {
                 any(Node.class), Matchers.<Map<String, Set<String>>>any());
 
         try {
-            accessRoles.post(paths, data);
+            accessRoles.post(data);
         } finally {
             verify(accessRolesProvider).postRoles(any(Node.class),
                     Matchers.<Map<String, Set<String>>>any());
@@ -278,7 +277,7 @@ public class AccessRolesTest {
 
     @Test
     public void testDeleteRolesAtNode() throws RepositoryException {
-        final Response response = accessRoles.deleteNodeType(paths);
+        final Response response = accessRoles.deleteNodeType();
 
         assertEquals("Delete response must be NO CONTENT", 204, response
                 .getStatus());
@@ -295,7 +294,7 @@ public class AccessRolesTest {
                 .deleteRoles(any(Node.class));
 
         try {
-            accessRoles.deleteNodeType(paths);
+            accessRoles.deleteNodeType();
         } finally {
             verify(accessRolesProvider).deleteRoles(any(Node.class));
 
