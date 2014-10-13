@@ -19,6 +19,7 @@ import static java.util.Collections.singletonMap;
 
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.ws.rs.core.UriInfo;
 
@@ -27,7 +28,7 @@ import org.fcrepo.jcr.FedoraJcrTypes;
 import org.fcrepo.kernel.FedoraResource;
 import org.fcrepo.kernel.RdfLexicon;
 import org.fcrepo.kernel.exception.RepositoryRuntimeException;
-import org.fcrepo.kernel.rdf.IdentifierTranslator;
+import org.fcrepo.kernel.identifiers.IdentifierConverter;
 import org.springframework.stereotype.Component;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -50,11 +51,11 @@ public class AccessRolesResources implements UriAwareResourceModelFactory {
      */
     @Override
     public Model createModelForResource(final FedoraResource resource,
-            final UriInfo uriInfo, final IdentifierTranslator graphSubjects) {
+            final UriInfo uriInfo, final IdentifierConverter<Resource, Node> graphSubjects) {
         final Model model = ModelFactory.createDefaultModel();
 
         try {
-            final Resource s = graphSubjects.getSubject(resource.getNode().getPath());
+            final Resource s = graphSubjects.reverse().convert(resource.getNode());
 
             if (resource.getNode().isNodeType(
                     FedoraJcrTypes.FEDORA_RESOURCE)) {

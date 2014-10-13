@@ -223,7 +223,7 @@ public class AccessRolesProvider {
                 }
                 break;
             } catch (final PathNotFoundException e) {
-                LOGGER.debug("Cannot find node: {}", p, e);
+                LOGGER.trace("Cannot find node: {}, trying parent.", p, e);
             }
         }
         return this.getRoles(node, true);

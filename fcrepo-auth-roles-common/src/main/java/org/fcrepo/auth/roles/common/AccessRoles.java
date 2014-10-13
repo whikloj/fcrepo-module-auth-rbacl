@@ -16,6 +16,7 @@
 package org.fcrepo.auth.roles.common;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.fcrepo.jcr.FedoraJcrTypes.FCR_METADATA;
 
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -36,13 +37,21 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.PathSegment;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.hp.hpl.jena.rdf.model.Resource;
 import org.fcrepo.http.commons.AbstractResource;
+import org.fcrepo.http.commons.api.rdf.UriAwareIdentifierConverter;
+import org.fcrepo.kernel.FedoraBinary;
 import org.fcrepo.kernel.FedoraResource;
+import org.fcrepo.kernel.identifiers.IdentifierConverter;
+import org.fcrepo.kernel.impl.DatastreamImpl;
+import org.fcrepo.kernel.impl.FedoraBinaryImpl;
+import org.fcrepo.kernel.impl.FedoraObjectImpl;
 import org.jvnet.hk2.annotations.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,12 +65,15 @@ import com.codahale.metrics.annotation.Timed;
  * @author Gregory Jansen
  * @since Sep 5, 2013
  */
-@Scope("prototype")
+@Scope("request")
 @Path("/{path: .*}/fcr:accessroles")
 public class AccessRoles extends AbstractResource {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(AccessRoles.class);
+
+    protected IdentifierConverter<Resource,Node> identifierTranslator;
+
 
     @Inject
     protected Session session;
@@ -70,8 +82,30 @@ public class AccessRoles extends AbstractResource {
     @Optional
     private AccessRolesProvider accessRolesProvider;
 
-    @Context
-    protected HttpServletRequest request;
+    @Context protected Request request;
+    @Context protected HttpServletResponse servletResponse;
+    @Context protected UriInfo uriInfo;
+
+    protected FedoraResource resource;
+
+    @PathParam("path") protected String externalPath;
+
+
+    /**
+     * Default JAX-RS entry point
+     */
+    public AccessRoles() {
+        super();
+    }
+
+    /**
+     * Create a new FedoraNodes instance for a given path
+     * @param externalPath
+     */
+    @VisibleForTesting
+    public AccessRoles(final String externalPath) {
+        this.externalPath = externalPath;
+    }
 
 
     /**
@@ -84,21 +118,25 @@ public class AccessRoles extends AbstractResource {
     /**
      * Retrieve the roles assigned to each principal on this specific path.
      *
-     * @param pathList
      * @return JSON representation of assignment map
      * @throws RepositoryException
      */
     @GET
     @Produces(APPLICATION_JSON)
     @Timed
-    public Response get(@PathParam("path") final List<PathSegment> pathList,
-                        @QueryParam("effective") final String effective) {
-        final String path = toPath(pathList);
-        LOGGER.debug("Get access roles for: {}", path);
+    public Response get(@QueryParam("effective") final String effective) {
+        LOGGER.debug("Get access roles for: {}", externalPath);
         LOGGER.debug("effective: {}", effective);
         Response.ResponseBuilder response;
         try {
-            final Node node = nodeService.getObject(session, path).getNode();
+            final Node node;
+
+            if (resource instanceof FedoraBinary) {
+                node = ((FedoraBinary) resource()).getDescription().getNode();
+            } else {
+                node = resource().getNode();
+            }
+
             final Map<String, List<String>> data =
                     this.getAccessRolesProvider().getRoles(node,
                             (effective != null));
@@ -117,7 +155,6 @@ public class AccessRoles extends AbstractResource {
     /**
      * Apply new role assignments at the specified node.
      *
-     * @param pathList
      * @param data
      * @return response
      * @throws RepositoryException
@@ -125,24 +162,26 @@ public class AccessRoles extends AbstractResource {
     @POST
     @Consumes(APPLICATION_JSON)
     @Timed
-    public Response post(@PathParam("path")
-        final List<PathSegment> pathList, final Map<String, Set<String>> data)
+    public Response post(final Map<String, Set<String>> data)
         throws RepositoryException {
-        final String path = toPath(pathList);
         LOGGER.debug("POST Received request param: {}", request);
         Response.ResponseBuilder response;
 
         try {
             validatePOST(data);
 
-            final FedoraResource resource =
-                    nodeService.getObject(session, path);
-            this.getAccessRolesProvider().postRoles(resource.getNode(), data);
+            final FedoraResource resource = resource();
+
+            if (resource instanceof FedoraBinary) {
+                this.getAccessRolesProvider().postRoles(((FedoraBinary) resource).getDescription().getNode(), data);
+            } else {
+                this.getAccessRolesProvider().postRoles(resource.getNode(), data);
+            }
             session.save();
             LOGGER.debug("Saved access roles {}", data);
             response =
                     Response.created(getUriInfo().getBaseUriBuilder()
-                            .path(path).path("fcr:accessroles").build());
+                            .path(externalPath).path("fcr:accessroles").build());
 
         } catch (final IllegalArgumentException e) {
             throw new WebApplicationException(e, Response.status(Status.BAD_REQUEST).build());
@@ -184,11 +223,17 @@ public class AccessRoles extends AbstractResource {
      */
     @DELETE
     @Timed
-    public Response deleteNodeType(@PathParam("path")
-        final List<PathSegment> pathList) throws RepositoryException {
-        final String path = toPath(pathList);
+    public Response deleteNodeType() throws RepositoryException {
         try {
-            final Node node = nodeService.getObject(session, path).getNode();
+
+            final Node node;
+
+            if (resource instanceof FedoraBinary) {
+                node = ((FedoraBinary) resource()).getDescription().getNode();
+            } else {
+                node = resource().getNode();
+            }
+
             this.getAccessRolesProvider().deleteRoles(node);
             session.save();
             return Response.noContent().build();
@@ -199,6 +244,47 @@ public class AccessRoles extends AbstractResource {
 
     private UriInfo getUriInfo() {
         return this.uriInfo;
+    }
+
+    protected FedoraResource resource() {
+        if (resource == null) {
+            resource = getResourceFromPath(externalPath);
+        }
+
+        return resource;
+    }
+
+
+    protected IdentifierConverter<Resource,Node> translator() {
+        if (identifierTranslator == null) {
+            identifierTranslator = new UriAwareIdentifierConverter(session,
+                    uriInfo.getBaseUriBuilder().clone().path("{path: .*}"));
+        }
+
+        return identifierTranslator;
+    }
+
+    private FedoraResource getResourceFromPath(final String externalPath) {
+        final FedoraResource resource;
+        final boolean metadata = externalPath != null
+                && externalPath.endsWith(FCR_METADATA);
+
+        final Node node = translator().convert(translator().toDomain(externalPath));
+
+        if (DatastreamImpl.hasMixin(node)) {
+            final DatastreamImpl datastream = new DatastreamImpl(node);
+
+            if (metadata) {
+                resource = datastream;
+            } else {
+                resource = datastream.getBinary();
+            }
+        } else if (FedoraBinaryImpl.hasMixin(node)) {
+            resource = new FedoraBinaryImpl(node);
+        } else {
+            resource = new FedoraObjectImpl(node);
+        }
+        return resource;
     }
 
 }

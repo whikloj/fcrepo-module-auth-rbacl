@@ -25,15 +25,16 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.ws.rs.core.UriInfo;
 
 import org.fcrepo.jcr.FedoraJcrTypes;
 import org.fcrepo.kernel.FedoraResource;
 import org.fcrepo.kernel.RdfLexicon;
-import org.fcrepo.kernel.rdf.IdentifierTranslator;
+import org.fcrepo.kernel.identifiers.IdentifierConverter;
+import org.fcrepo.kernel.impl.rdf.impl.DefaultIdentifierTranslator;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -47,16 +48,16 @@ import com.hp.hpl.jena.rdf.model.Resource;
  */
 public class AccessRolesResourcesTest {
 
-    @Mock
-    private IdentifierTranslator graphSubjects;
+    private IdentifierConverter<Resource, Node> graphSubjects;
 
     @Mock
     private FedoraResource fedoraResource;
 
-    private Resource graphResource;
-
     @Mock
     private Node resourceNode;
+
+    @Mock
+    private Session mockSession;
 
     private Model model;
 
@@ -74,11 +75,10 @@ public class AccessRolesResourcesTest {
 
         pathString = "path";
         model = ModelFactory.createDefaultModel();
-        graphResource = model.createResource("/" + pathString);
+        graphSubjects = new DefaultIdentifierTranslator(mockSession);
 
-        when(graphSubjects.getSubject(Matchers.anyString())).thenReturn(
-                graphResource);
         when(fedoraResource.getNode()).thenReturn(resourceNode);
+        when(resourceNode.getPath()).thenReturn("/" + pathString);
 
         uriInfo = getUriInfoImpl();
     }
