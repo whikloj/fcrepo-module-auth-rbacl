@@ -19,7 +19,6 @@ import static java.util.Collections.singletonMap;
 
 import java.util.Map;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.ws.rs.core.UriInfo;
 
@@ -51,11 +50,11 @@ public class AccessRolesResources implements UriAwareResourceModelFactory {
      */
     @Override
     public Model createModelForResource(final FedoraResource resource,
-            final UriInfo uriInfo, final IdentifierConverter<Resource, Node> graphSubjects) {
+            final UriInfo uriInfo, final IdentifierConverter<Resource, FedoraResource> graphSubjects) {
         final Model model = ModelFactory.createDefaultModel();
 
         try {
-            final Resource s = graphSubjects.reverse().convert(resource.getNode());
+            final Resource s = graphSubjects.reverse().convert(resource);
 
             if (resource.getNode().isNodeType(
                     FedoraJcrTypes.FEDORA_RESOURCE)) {

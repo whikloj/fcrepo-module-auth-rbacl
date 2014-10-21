@@ -16,6 +16,7 @@
 package org.fcrepo.auth.roles.basic.integration;
 
 import static org.fcrepo.auth.common.ServletContainerAuthenticationProvider.EVERYONE_NAME;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +24,14 @@ import java.util.UUID;
 
 import org.fcrepo.auth.roles.common.integration.AbstractRolesIT;
 import org.fcrepo.auth.roles.common.integration.RolesFadTestObjectBean;
+import org.slf4j.Logger;
 
 /**
  * @author Scott Prater
  */
 public abstract class AbstractBasicRolesIT extends AbstractRolesIT {
+
+    private static Logger logger = getLogger(AbstractBasicRolesIT.class);
 
     protected final static String testParent1 = getRandomPid();
     protected final static String testParent2 = getRandomPid();
@@ -48,6 +52,22 @@ public abstract class AbstractBasicRolesIT extends AbstractRolesIT {
             defineTestObjects();
 
     private static List<RolesFadTestObjectBean> defineTestObjects() {
+
+        logger.debug("testParent1: {}", testParent1);
+        logger.debug("testParent2: {}", testParent2);
+        logger.debug("testParent3: {}", testParent3);
+        logger.debug("testParent4: {}", testParent4);
+        logger.debug("testChild1NoACL: {}", testChild1NoACL);
+        logger.debug("testChild2WithACL: {}", testChild2WithACL);
+        logger.debug("testChild3A: {}", testChild3A);
+        logger.debug("testChild3B: {}", testChild3B);
+        logger.debug("testChild4WithACL: {}", testChild4WithACL);
+        logger.debug("testChild5WithACL: {}", testChild5WithACL);
+        logger.debug("tsp1Data: {}", tsp1Data);
+        logger.debug("tsp2Data: {}", tsp2Data);
+        logger.debug("tsc1Data: {}", tsc1Data);
+        logger.debug("tsc2Data: {}", tsc2Data);
+
         final List<RolesFadTestObjectBean> test_objs = new ArrayList<>();
         /* public object with public datastream */
         final RolesFadTestObjectBean objA = new RolesFadTestObjectBean();

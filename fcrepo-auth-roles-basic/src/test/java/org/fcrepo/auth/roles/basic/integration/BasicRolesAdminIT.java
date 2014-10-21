@@ -21,6 +21,7 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.junit.Assert.assertEquals;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.fcrepo.auth.roles.common.integration.RolesFadTestObjectBean;
 
 import org.apache.http.client.ClientProtocolException;
 import org.junit.Test;
+import org.slf4j.Logger;
 
 /**
  * Verifies that role for admins is properly enforced.
@@ -37,6 +39,8 @@ import org.junit.Test;
  * @author Gregory Jansen
  */
 public class BasicRolesAdminIT extends AbstractBasicRolesIT {
+
+    private static Logger logger = getLogger(BasicRolesAdminIT.class);
 
     private final static String TESTDS = "admintestds";
 
@@ -481,30 +485,37 @@ public class BasicRolesAdminIT extends AbstractBasicRolesIT {
 
     /* Deletions */
     @Test
-    public void testAdminCanDeleteOpenObjAndItsDescendants()
-            throws ClientProtocolException, IOException {
+    public void testAdminCanDeleteOpenObjAndItsDescendants() throws Exception {
+        logger.debug("Running testAdminCanDeleteOpenObjAndItsDescendants()");
+
+        // "exampleadmin" must be able to write to '/' (tombstones added on delete)
+        final RolesFadTestObjectBean root = new RolesFadTestObjectBean();
+        root.setPath("/");
+        root.addACL("exampleadmin", "writer");
+        addObjectACLs(root);
+
         assertEquals("Admin cannot delete object testparent3!", NO_CONTENT
                 .getStatusCode(),
-                canDelete("exampleadmin", testParent3, true));
+                     canDelete("exampleadmin", testParent3, true));
 
         assertEquals(
-                "Admin should not have permission to try to read deleted datastream testparent3/tsp1_data!",
-                FORBIDDEN.getStatusCode(), canDelete("exampleadmin",
+                "Admin should not be able to read deleted datastream testparent3/tsp1_data!",
+                NOT_FOUND.getStatusCode(), canDelete("exampleadmin",
                         testParent3 + "/" + tsp1Data, true));
 
         assertEquals(
-                "Admin should not have permission to try to read deleted datastream testparent3/tsp2_data!",
-                FORBIDDEN.getStatusCode(), canDelete("exampleadmin",
+                "Admin should not be able to read deleted datastream testparent3/tsp2_data!",
+                NOT_FOUND.getStatusCode(), canDelete("exampleadmin",
                         testParent3 + "/" + tsp2Data, true));
 
         assertEquals(
-                "Admin should not have permission to try to read deleted object testparent3/testchild3a!",
-                FORBIDDEN.getStatusCode(), canDelete("exampleadmin",
+                "Admin should not be able to read deleted object testparent3/testchild3a!",
+                NOT_FOUND.getStatusCode(), canDelete("exampleadmin",
                         testParent3 + "/" + testChild3A, true));
 
         assertEquals(
-                "Admin should not have permission to try to read deleted object testparent3/testchild3b!",
-                FORBIDDEN.getStatusCode(), canDelete("exampleadmin",
+                "Admin should not be able to read deleted object testparent3/testchild3b!",
+                NOT_FOUND.getStatusCode(), canDelete("exampleadmin",
                         testParent3 + "/" + testChild3B, true));
 
         assertEquals(

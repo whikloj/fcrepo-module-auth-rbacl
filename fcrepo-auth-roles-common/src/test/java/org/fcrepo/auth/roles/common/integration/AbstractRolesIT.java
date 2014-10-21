@@ -17,6 +17,7 @@ package org.fcrepo.auth.roles.common.integration;
 
 import static java.util.Collections.singletonList;
 import static javax.ws.rs.core.Response.Status.CREATED;
+import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -386,14 +387,21 @@ public abstract class AbstractRolesIT {
 
     protected void deleteTestObject(
             final RolesFadTestObjectBean obj) {
-        try {
-            final HttpDelete method = deleteObjMethod(obj.getPath());
-            setAuth(method, "fedoraAdmin");
-            client.execute(method);
-        } catch (final Throwable ignored) {
-            logger.debug("object {} doesn't exist -- not deleting", obj
-                    .getPath());
+        doDeleteTestObject(obj.getPath());
+        doDeleteTestObject(obj.getPath() + "/fcr:tombstone");
+    }
 
+    private void doDeleteTestObject(final String path) {
+        try {
+            final HttpDelete method = deleteObjMethod(path);
+            setAuth(method, "fedoraAdmin");
+            final HttpResponse response = client.execute(method);
+
+            assertEquals("Didn't get a DELETED response! Got content:\n" + EntityUtils.toString(response.getEntity()),
+                         response.getStatusLine().getStatusCode(), NO_CONTENT.getStatusCode());
+
+        } catch (final Throwable ignored) {
+            logger.debug("object {} doesn't exist -- not deleting", path);
         }
     }
 
@@ -438,9 +446,10 @@ public abstract class AbstractRolesIT {
         method.setHeader("Authorization", basic);
     }
 
-    private void addObjectACLs(
+    protected void addObjectACLs(
             final RolesFadTestObjectBean obj)
                     throws Exception {
+        logger.debug("Adding acls ({}) for {}", obj.getACLs().size(), obj.getPath());
         if (obj.getACLs().size() > 0) {
             final String jsonACLs = createJsonACLs(obj.getACLs());
             assertEquals(CREATED.getStatusCode(), postRoles(obj.getPath(),
@@ -451,6 +460,7 @@ public abstract class AbstractRolesIT {
     private void addDatastreams(
             final RolesFadTestObjectBean obj)
                     throws Exception {
+        logger.debug("Adding datastreams ({}) for {}", obj.getDatastreams().size(), obj.getPath());
         for (final Map<String, String> entries : obj.getDatastreams()) {
             for (final Map.Entry<String, String> entry : entries.entrySet()) {
                 final String dsid = entry.getKey();

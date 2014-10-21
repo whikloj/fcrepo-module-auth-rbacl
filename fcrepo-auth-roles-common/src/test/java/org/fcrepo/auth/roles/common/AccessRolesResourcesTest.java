@@ -48,7 +48,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
  */
 public class AccessRolesResourcesTest {
 
-    private IdentifierConverter<Resource, Node> graphSubjects;
+    private IdentifierConverter<Resource, FedoraResource> graphSubjects;
 
     @Mock
     private FedoraResource fedoraResource;
@@ -87,6 +87,7 @@ public class AccessRolesResourcesTest {
     public void testCreateModelForNonFedoraResource()
             throws RepositoryException {
 
+        when(fedoraResource.getPath()).thenReturn("/" + pathString);
         when(resourceNode.isNodeType(eq(FedoraJcrTypes.FEDORA_RESOURCE)))
                 .thenReturn(false);
 

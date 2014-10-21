@@ -8,14 +8,15 @@
   <!-- Context that supports the actual ModeShape JCR itself -->
 
   <context:annotation-config />
-  
-  <context:component-scan base-package="org.fcrepo" />
 
   <bean name="modeshapeRepofactory" class="org.fcrepo.kernel.impl.spring.ModeShapeRepositoryFactoryBean">
     <property name="repositoryConfiguration" value="${fcrepo.modeshape.configuration:config/minimal-default/repository.json}" />
   </bean>
 
-    <bean class="org.modeshape.jcr.ModeShapeEngine" init-method="start"/>
+  <bean class="org.modeshape.jcr.ModeShapeEngine" init-method="start"/>
+
+  <!-- For the time being, load annotation config here too -->
+  <bean class="org.fcrepo.metrics.MetricsConfig"/>
 
   <bean id="connectionManager" class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager" />
 

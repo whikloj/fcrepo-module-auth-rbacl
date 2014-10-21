@@ -16,7 +16,6 @@
 package org.fcrepo.auth.roles.common;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static org.fcrepo.jcr.FedoraJcrTypes.FCR_METADATA;
 
 import java.util.List;
 import java.util.Map;
@@ -45,13 +44,10 @@ import javax.ws.rs.core.UriInfo;
 import com.google.common.annotations.VisibleForTesting;
 import com.hp.hpl.jena.rdf.model.Resource;
 import org.fcrepo.http.commons.AbstractResource;
-import org.fcrepo.http.commons.api.rdf.UriAwareIdentifierConverter;
+import org.fcrepo.http.commons.api.rdf.HttpResourceConverter;
 import org.fcrepo.kernel.FedoraBinary;
 import org.fcrepo.kernel.FedoraResource;
 import org.fcrepo.kernel.identifiers.IdentifierConverter;
-import org.fcrepo.kernel.impl.DatastreamImpl;
-import org.fcrepo.kernel.impl.FedoraBinaryImpl;
-import org.fcrepo.kernel.impl.FedoraObjectImpl;
 import org.jvnet.hk2.annotations.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +68,7 @@ public class AccessRoles extends AbstractResource {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(AccessRoles.class);
 
-    protected IdentifierConverter<Resource,Node> identifierTranslator;
+    protected IdentifierConverter<Resource,FedoraResource> identifierTranslator;
 
 
     @Inject
@@ -255,9 +251,9 @@ public class AccessRoles extends AbstractResource {
     }
 
 
-    protected IdentifierConverter<Resource,Node> translator() {
+    protected IdentifierConverter<Resource,FedoraResource> translator() {
         if (identifierTranslator == null) {
-            identifierTranslator = new UriAwareIdentifierConverter(session,
+            identifierTranslator = new HttpResourceConverter(session,
                     uriInfo.getBaseUriBuilder().clone().path("{path: .*}"));
         }
 
@@ -265,26 +261,7 @@ public class AccessRoles extends AbstractResource {
     }
 
     private FedoraResource getResourceFromPath(final String externalPath) {
-        final FedoraResource resource;
-        final boolean metadata = externalPath != null
-                && externalPath.endsWith(FCR_METADATA);
-
-        final Node node = translator().convert(translator().toDomain(externalPath));
-
-        if (DatastreamImpl.hasMixin(node)) {
-            final DatastreamImpl datastream = new DatastreamImpl(node);
-
-            if (metadata) {
-                resource = datastream;
-            } else {
-                resource = datastream.getBinary();
-            }
-        } else if (FedoraBinaryImpl.hasMixin(node)) {
-            resource = new FedoraBinaryImpl(node);
-        } else {
-            resource = new FedoraObjectImpl(node);
-        }
-        return resource;
+        return translator().convert(translator().toDomain(externalPath));
     }
 
 }

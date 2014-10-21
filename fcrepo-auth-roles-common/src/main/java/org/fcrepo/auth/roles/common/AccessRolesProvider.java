@@ -68,6 +68,12 @@ public class AccessRolesProvider {
      * @return a set of roles for each principal
      */
     public Map<String, List<String>> getRoles(final Node node, final boolean effective) {
+        try {
+            LOGGER.debug("Finding roles for: {}, effective={}", node.getPath(), effective);
+        } catch (RepositoryException e) {
+            LOGGER.debug("Unable to get path! {}", e.getMessage());
+        }
+
         final Map<String, List<String>> data = new HashMap<>();
         try {
 
@@ -94,7 +100,7 @@ public class AccessRolesProvider {
                         }
                     }
                 } catch (final ItemNotFoundException e) {
-                    LOGGER.trace("Subject not found, using default access roles", e);
+                    LOGGER.debug("Subject not found, using default access roles: {}", e.getMessage());
                     return DEFAULT_ACCESS_ROLES;
                 }
             }

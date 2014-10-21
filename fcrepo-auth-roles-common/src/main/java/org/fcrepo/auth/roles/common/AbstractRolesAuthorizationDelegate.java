@@ -76,8 +76,15 @@ public abstract class AbstractRolesAuthorizationDelegate implements FedoraAuthor
     }
 
     @Override
-    public boolean hasPermission(final Session session, final Path absPath,
-            final String[] actions) {
+    public boolean hasPermission(final Session session, final Path absPath, final String[] actions) {
+        LOGGER.debug("Does user have permission for actions: {}, on path: {}", actions, absPath);
+        final boolean permission = doHasPermission(session, absPath, actions);
+
+        LOGGER.debug("Permission for actions: {}, on: {} = {}", actions, absPath, permission);
+        return permission;
+    }
+
+    private boolean doHasPermission(final Session session, final Path absPath, final String[] actions) {
         final Set<String> roles;
 
         final Principal userPrincipal = getUserPrincipal(session);
@@ -103,7 +110,7 @@ public abstract class AbstractRolesAuthorizationDelegate implements FedoraAuthor
         }
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("{}\t{}\t{}", roles, actions, absPath);
+            LOGGER.debug("roles: {}, actions: {}, path: {}", roles, actions, absPath);
             if (actions.length > 1) { // have yet to see more than one
                 LOGGER.debug("FOUND MULTIPLE ACTIONS: {}", Arrays
                         .toString(actions));
