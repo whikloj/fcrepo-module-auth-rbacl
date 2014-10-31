@@ -44,7 +44,7 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
-import org.fcrepo.kernel.FedoraResource;
+import org.fcrepo.kernel.models.FedoraResource;
 import org.fcrepo.kernel.exception.RepositoryRuntimeException;
 import org.fcrepo.kernel.services.NodeService;
 import org.junit.Before;
@@ -95,7 +95,7 @@ public class AccessRolesTest {
 
         when(session.getNode("/some/path")).thenReturn(mockNode);
 
-        when(nodeService.getObject(any(Session.class), anyString()))
+        when(nodeService.find(any(Session.class), anyString()))
                 .thenReturn(fedoraResource);
 
     }
