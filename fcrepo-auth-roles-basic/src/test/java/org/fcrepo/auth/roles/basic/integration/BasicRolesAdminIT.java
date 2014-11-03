@@ -17,7 +17,7 @@ package org.fcrepo.auth.roles.basic.integration;
 
 import static javax.ws.rs.core.Response.Status.CREATED;
 import static javax.ws.rs.core.Response.Status.FORBIDDEN;
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.GONE;
 import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.junit.Assert.assertEquals;
@@ -500,42 +500,42 @@ public class BasicRolesAdminIT extends AbstractBasicRolesIT {
 
         assertEquals(
                 "Admin should not be able to read deleted datastream testparent3/tsp1_data!",
-                NOT_FOUND.getStatusCode(), canDelete("exampleadmin",
+                GONE.getStatusCode(), canDelete("exampleadmin",
                         testParent3 + "/" + tsp1Data, true));
 
         assertEquals(
                 "Admin should not be able to read deleted datastream testparent3/tsp2_data!",
-                NOT_FOUND.getStatusCode(), canDelete("exampleadmin",
+                GONE.getStatusCode(), canDelete("exampleadmin",
                         testParent3 + "/" + tsp2Data, true));
 
         assertEquals(
                 "Admin should not be able to read deleted object testparent3/testchild3a!",
-                NOT_FOUND.getStatusCode(), canDelete("exampleadmin",
+                GONE.getStatusCode(), canDelete("exampleadmin",
                         testParent3 + "/" + testChild3A, true));
 
         assertEquals(
                 "Admin should not be able to read deleted object testparent3/testchild3b!",
-                NOT_FOUND.getStatusCode(), canDelete("exampleadmin",
+                GONE.getStatusCode(), canDelete("exampleadmin",
                         testParent3 + "/" + testChild3B, true));
 
         assertEquals(
                 "Fedora Admin should not be able to read deleted datastream testparent3/tsp1_data!",
-                NOT_FOUND.getStatusCode(), canDelete("fedoraAdmin",
+                GONE.getStatusCode(), canDelete("fedoraAdmin",
                         testParent3 + "/" + tsp1Data, true));
 
         assertEquals(
                 "Fedora Admin should not be able to read deleted datastream testparent3/tsp2_data!",
-                NOT_FOUND.getStatusCode(), canDelete("fedoraAdmin",
+                GONE.getStatusCode(), canDelete("fedoraAdmin",
                         testParent3 + "/" + tsp2Data, true));
 
         assertEquals(
                 "Fedora Admin should not be able to read deleted object testparent3/testchild3a!",
-                NOT_FOUND.getStatusCode(), canDelete("fedoraAdmin",
+                GONE.getStatusCode(), canDelete("fedoraAdmin",
                         testParent3 + "/" + testChild3A, true));
 
         assertEquals(
                 "Fedora Admin should not be able to read deleted object testparent3/testchild3b!",
-                NOT_FOUND.getStatusCode(), canDelete("fedoraAdmin",
+                GONE.getStatusCode(), canDelete("fedoraAdmin",
                         testParent3 + "/" + testChild3B, true));
     }
 
