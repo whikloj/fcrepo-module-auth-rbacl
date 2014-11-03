@@ -29,7 +29,7 @@ import javax.jcr.Session;
 import javax.ws.rs.core.UriInfo;
 
 import org.fcrepo.jcr.FedoraJcrTypes;
-import org.fcrepo.kernel.FedoraResource;
+import org.fcrepo.kernel.models.FedoraResource;
 import org.fcrepo.kernel.RdfLexicon;
 import org.fcrepo.kernel.identifiers.IdentifierConverter;
 import org.fcrepo.kernel.impl.rdf.impl.DefaultIdentifierTranslator;
