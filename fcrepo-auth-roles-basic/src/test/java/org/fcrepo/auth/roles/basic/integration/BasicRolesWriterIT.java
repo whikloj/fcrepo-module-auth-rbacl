@@ -29,6 +29,7 @@ import javax.ws.rs.core.Response.Status;
 import org.fcrepo.auth.roles.common.integration.RolesFadTestObjectBean;
 
 import org.apache.http.client.ClientProtocolException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -40,6 +41,8 @@ import org.junit.Test;
 public class BasicRolesWriterIT extends AbstractBasicRolesIT {
 
     private final static String TESTDS = "writertestds";
+
+    private final static String TESTCHILD = "writertestchild";
 
     @Override
     protected List<RolesFadTestObjectBean> getTestObjs() {
@@ -61,6 +64,15 @@ public class BasicRolesWriterIT extends AbstractBasicRolesIT {
 "Writer cannot write datastream to testparent1!", CREATED
                 .getStatusCode(), canAddDS("examplewriter", testParent1,
                         TESTDS, true));
+    }
+
+    @Test
+    public void testWriterCanAddChildToOpenObj()
+            throws ClientProtocolException, IOException {
+        assertEquals(
+"Writer cannot add child to testparent1!", CREATED
+                .getStatusCode(), canAddChild("examplewriter", testParent1,
+                        TESTCHILD, true));
     }
 
     @Test
@@ -165,6 +177,15 @@ public class BasicRolesWriterIT extends AbstractBasicRolesIT {
     }
 
     @Test
+    public void testWriterCanAddChildToInheritedACLChildObj()
+            throws ClientProtocolException, IOException {
+        assertEquals(
+                "Writer cannot add child to testparent1/testchild1NoACL!",
+                Status.CREATED.getStatusCode(), canAddChild("examplewriter",
+                        testParent1 + "/" + testChild1NoACL, TESTCHILD, true));
+    }
+
+    @Test
     public void testWriterCannotAddACLToInheritedACLChildObj()
             throws ClientProtocolException, IOException {
         assertEquals(
@@ -220,6 +241,15 @@ public class BasicRolesWriterIT extends AbstractBasicRolesIT {
                 "Writer cannot write datastream to testparent1/testchild2WithACL!",
                 CREATED.getStatusCode(), canAddDS("examplewriter",
                         testParent1 + "/" + testChild2WithACL, TESTDS, true));
+    }
+
+    @Test
+    public void testWriterCanAddChildToRestrictedChildObj()
+            throws ClientProtocolException, IOException {
+        assertEquals(
+                "Writer cannot add child to testparent1/testchild2WithACL!",
+                CREATED.getStatusCode(), canAddChild("examplewriter",
+                        testParent1 + "/" + testChild2WithACL, TESTCHILD, true));
     }
 
     @Test
@@ -301,7 +331,7 @@ public class BasicRolesWriterIT extends AbstractBasicRolesIT {
             throws ClientProtocolException, IOException {
         assertEquals("Writer cannot read testparent1/testchild4WithACL!", OK
                 .getStatusCode(), canRead("examplewriter",
-                        testParent1 + "/" + testChild4WithACL, true));
+                testParent1 + "/" + testChild4WithACL, true));
     }
 
     @Test
@@ -311,6 +341,15 @@ public class BasicRolesWriterIT extends AbstractBasicRolesIT {
                 "Writer cannot write datastream to testparent1/testchild4WithACL!",
                 CREATED.getStatusCode(), canAddDS("examplewriter",
                         testParent1 + "/" + testChild4WithACL, TESTDS, true));
+    }
+
+    @Test
+    public void testWriterCanAddChildToWriterRestrictedChildObj()
+            throws ClientProtocolException, IOException {
+        assertEquals(
+                "Writer cannot add child to testparent1/testchild4WithACL!",
+                CREATED.getStatusCode(), canAddChild("examplewriter",
+                        testParent1 + "/" + testChild4WithACL, TESTCHILD, true));
     }
 
     @Test
@@ -409,6 +448,15 @@ public class BasicRolesWriterIT extends AbstractBasicRolesIT {
                 "Writer should not be allowed to write datastream to testparent2/testchild5WithACL!",
                 FORBIDDEN.getStatusCode(), canAddDS("examplewriter",
                         testParent2 + "/" + testChild5WithACL, TESTDS, true));
+    }
+
+    @Test
+    public void testWriterCannotAddChildToAdminObj()
+            throws ClientProtocolException, IOException {
+        assertEquals(
+                "Writer should not be allowed to add child to testparent2/testchild5WithACL!",
+                FORBIDDEN.getStatusCode(), canAddChild("examplewriter",
+                        testParent2 + "/" + testChild5WithACL, TESTCHILD, true));
     }
 
     @Test
@@ -541,6 +589,15 @@ public class BasicRolesWriterIT extends AbstractBasicRolesIT {
     }
 
     @Test
+    public void testWriterCannotAddChildToRootNode()
+            throws ClientProtocolException, IOException {
+        assertEquals(
+                "Writer should not be allowed to add child to root node!",
+                FORBIDDEN
+                .getStatusCode(), canAddChild("examplewriter", "/", TESTCHILD, true));
+    }
+
+    @Test
     public void testWriterCannotAddACLToRootNode()
             throws ClientProtocolException, IOException {
         assertEquals(
@@ -554,5 +611,15 @@ public class BasicRolesWriterIT extends AbstractBasicRolesIT {
     public void testWriterReaderCanReadACL() throws ClientProtocolException, IOException {
         assertEquals("Writer-reader should be allowed to read ACL permissions", OK.getStatusCode(), canGetRoles(
                 "exampleWriterReader", testParent4, true));
+    }
+
+    @Ignore("Awaiting bug fix for story 72982948")
+    @Test
+    public void testWriterCanAddChildToRestrictedChildObjUnderRestrictedParent()
+            throws ClientProtocolException, IOException {
+        assertEquals(
+                "Writer cannot add child to testparent4/testchild4WithACL!",
+                CREATED.getStatusCode(), canAddChild("examplewriter",
+                        testParent4 + "/" + testChild4WithACL, TESTCHILD, true));
     }
 }

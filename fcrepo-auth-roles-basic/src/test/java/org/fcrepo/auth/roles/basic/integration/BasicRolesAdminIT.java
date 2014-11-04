@@ -29,6 +29,7 @@ import java.util.List;
 import org.fcrepo.auth.roles.common.integration.RolesFadTestObjectBean;
 
 import org.apache.http.client.ClientProtocolException;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 
@@ -43,6 +44,8 @@ public class BasicRolesAdminIT extends AbstractBasicRolesIT {
     private static Logger logger = getLogger(BasicRolesAdminIT.class);
 
     private final static String TESTDS = "admintestds";
+
+    private final static String TESTCHILD = "admintestchild";
 
     @Override
     protected List<RolesFadTestObjectBean> getTestObjs() {
@@ -65,6 +68,15 @@ public class BasicRolesAdminIT extends AbstractBasicRolesIT {
                 "Admin cannot write datastream to testparent1!", CREATED
                 .getStatusCode(), canAddDS("exampleadmin", testParent1,
                         TESTDS, true));
+    }
+
+    @Test
+    public void testAdminCanAddChildToOpenObj()
+            throws ClientProtocolException, IOException {
+        assertEquals(
+                "Admin cannot add child to testparent1!", CREATED
+                .getStatusCode(), canAddChild("exampleadmin", testParent1,
+                        TESTCHILD, true));
     }
 
     @Test
@@ -171,6 +183,16 @@ public class BasicRolesAdminIT extends AbstractBasicRolesIT {
     }
 
     @Test
+    public void testAdminCanAddChildToInheritedACLChildObj()
+            throws ClientProtocolException, IOException {
+        assertEquals(
+                "Admin cannot add child to testparent1/testchild1NoACL!",
+                CREATED
+                .getStatusCode(), canAddChild("exampleadmin",
+                        testParent1 + "/" + testChild1NoACL, TESTCHILD, true));
+    }
+
+    @Test
     public void testAdminCanAddACLToInheritedACLChildObj()
             throws ClientProtocolException, IOException {
         assertEquals(
@@ -227,6 +249,15 @@ public class BasicRolesAdminIT extends AbstractBasicRolesIT {
                 "Admin cannot write datastream to testparent1/testchild2WithACL!",
                 CREATED.getStatusCode(), canAddDS("exampleadmin",
                         testParent1 + "/" + testChild2WithACL, TESTDS, true));
+    }
+
+    @Test
+    public void testAdminCanAddChildToRestrictedChildObj()
+            throws ClientProtocolException, IOException {
+        assertEquals(
+                "Admin cannot add child to testparent1/testchild2WithACL!",
+                CREATED.getStatusCode(), canAddChild("exampleadmin",
+                        testParent1 + "/" + testChild2WithACL, TESTCHILD, true));
     }
 
     @Test
@@ -308,7 +339,7 @@ public class BasicRolesAdminIT extends AbstractBasicRolesIT {
             throws ClientProtocolException, IOException {
         assertEquals("Admin cannot read testparent1/testchild4WithACL!", OK
                 .getStatusCode(), canRead("exampleadmin",
-                        testParent1 + "/" + testChild4WithACL, true));
+                testParent1 + "/" + testChild4WithACL, true));
     }
 
     @Test
@@ -318,6 +349,15 @@ public class BasicRolesAdminIT extends AbstractBasicRolesIT {
                 "Admin cannot write datastream to testparent1/testchild4WithACL!",
                 CREATED.getStatusCode(), canAddDS("exampleadmin",
                         testParent1 + "/" + testChild4WithACL, TESTDS, true));
+    }
+
+    @Test
+    public void testAdminCanAddChildToWriterRestrictedChildObj()
+            throws ClientProtocolException, IOException {
+        assertEquals(
+                "Admin cannot add child to testparent1/testchild4WithACL!",
+                CREATED.getStatusCode(), canAddChild("exampleadmin",
+                        testParent1 + "/" + testChild4WithACL, TESTCHILD, true));
     }
 
     @Test
@@ -405,7 +445,7 @@ public class BasicRolesAdminIT extends AbstractBasicRolesIT {
     IOException {
         assertEquals("Admin cannot read testparent2/testChild5WithACL!", OK
                 .getStatusCode(), canRead("exampleadmin",
-                        testParent2 + "/" + testChild5WithACL, true));
+                testParent2 + "/" + testChild5WithACL, true));
     }
 
     @Test
@@ -415,6 +455,15 @@ public class BasicRolesAdminIT extends AbstractBasicRolesIT {
                 "Admin cannot write datastream to testparent2/testChild5WithACL!",
                 CREATED.getStatusCode(), canAddDS("exampleadmin",
                         testParent2 + "/" + testChild5WithACL, TESTDS, true));
+    }
+
+    @Test
+    public void testAdminCanAddChildToAdminObj()
+            throws ClientProtocolException, IOException {
+        assertEquals(
+                "Admin cannot add child to testparent2/testChild5WithACL!",
+                CREATED.getStatusCode(), canAddChild("exampleadmin",
+                        testParent2 + "/" + testChild5WithACL, TESTCHILD, true));
     }
 
     @Test
@@ -565,5 +614,15 @@ public class BasicRolesAdminIT extends AbstractBasicRolesIT {
                 FORBIDDEN
                 .getStatusCode(), canAddACL("exampleadmin", "/", "EVERYONE",
                         "admin", true));
+    }
+
+    @Ignore("Awaiting bug fix for story 72982948")
+    @Test
+    public void testAdminCanAddChildToRestrictedChildObjUnderRestrictedParent()
+            throws ClientProtocolException, IOException {
+        assertEquals(
+                "Admin cannot add child to testparent4/testchild4WithACL!",
+                CREATED.getStatusCode(), canAddChild("exampleadmin",
+                        testParent4 + "/" + testChild4WithACL, TESTCHILD, true));
     }
 }
