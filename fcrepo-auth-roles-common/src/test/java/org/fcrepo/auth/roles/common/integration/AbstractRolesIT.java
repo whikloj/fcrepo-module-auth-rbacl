@@ -68,7 +68,7 @@ public abstract class AbstractRolesIT {
     private static Logger logger = getLogger(AbstractRolesIT.class);
 
     protected static final int SERVER_PORT = Integer.parseInt(System
-            .getProperty("test.port", "8080"));
+            .getProperty("fcrepo.test.port", "8080"));
 
     protected static final String HOSTNAME = "localhost";
 
