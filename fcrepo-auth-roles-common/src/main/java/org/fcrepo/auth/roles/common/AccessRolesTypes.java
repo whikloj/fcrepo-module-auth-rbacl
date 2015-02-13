@@ -48,8 +48,7 @@ public class AccessRolesTypes {
     /**
      * Initialize, register role assignment node types.
      *
-     * @throws RepositoryException
-     * @throws IOException
+     * @throws IOException if io exception occurred
      */
     @PostConstruct
     public void setUpRepositoryConfiguration() throws IOException {

@@ -58,6 +58,7 @@ public abstract class AbstractRolesAuthorizationDelegate implements FedoraAuthor
     /**
      * Gather effectives roles
      *
+     * @param acl access control list
      * @param principals effective principals
      * @return set of effective content roles
      */

@@ -101,8 +101,8 @@ public class Constants {
 
     /**
      * Adds access roles prefix "authz" to the given session.
-     * @param session
-     * @throws RepositoryException
+     * @param session session
+     * @throws RepositoryException if repository exception occurred
      */
     public static void registerPrefixes(final Session session)
         throws RepositoryException {

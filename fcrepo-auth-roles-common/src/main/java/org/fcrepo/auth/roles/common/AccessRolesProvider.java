@@ -161,6 +161,7 @@ public class AccessRolesProvider {
      *
      * @param node the Node to edit
      * @param data the roles to assign
+     * @throws RepositoryException if repository exception occurred
      */
     public void postRoles(final Node node, final Map<String, Set<String>> data)
         throws RepositoryException {
@@ -192,7 +193,8 @@ public class AccessRolesProvider {
     /**
      * Deletes all roles assigned on this node and removes the mixin type.
      *
-     * @param node
+     * @param node the node to delete
+     * @throws RepositoryException if delete failed
      */
     public void deleteRoles(final Node node) throws RepositoryException {
         final Session session = node.getSession();
@@ -214,8 +216,9 @@ public class AccessRolesProvider {
      * Finds effective roles assigned to a path, using first real ancestor node.
      *
      * @param absPath the real or potential node path
+     * @param session session
      * @return the roles assigned to each principal
-     * @throws RepositoryException
+     * @throws RepositoryException if PathNotFoundException can not handle
      */
     public Map<String, List<String>> findRolesForPath(final Path absPath,
             final Session session) throws RepositoryException {
