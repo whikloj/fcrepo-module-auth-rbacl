@@ -148,7 +148,7 @@
       </dependency>
       <dependency>
         <groupId>org.fcrepo</groupId>
-        <artifactId>fcrepo-kernel-impl</artifactId>
+        <artifactId>fcrepo-kernel-modeshape</artifactId>
         <version>4.2.1-SNAPSHOT</version>
         <classifier>tests</classifier>
       </dependency>

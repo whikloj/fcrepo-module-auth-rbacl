@@ -92,7 +92,7 @@
     </dependency>
     <dependency>
       <groupId>org.fcrepo</groupId>
-      <artifactId>fcrepo-kernel-impl</artifactId>
+      <artifactId>fcrepo-kernel-modeshape</artifactId>
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>

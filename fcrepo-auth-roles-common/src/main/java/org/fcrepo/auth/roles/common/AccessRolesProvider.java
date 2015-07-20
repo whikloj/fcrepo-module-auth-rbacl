@@ -30,7 +30,7 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.fcrepo.auth.roles.common.Constants.JcrName;
-import org.fcrepo.kernel.exception.RepositoryRuntimeException;
+import org.fcrepo.kernel.api.exception.RepositoryRuntimeException;
 import org.modeshape.jcr.value.Path;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;

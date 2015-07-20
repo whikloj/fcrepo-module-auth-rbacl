@@ -34,7 +34,7 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 
 import org.fcrepo.http.commons.session.SessionFactory;
-import org.fcrepo.kernel.exception.RepositoryRuntimeException;
+import org.fcrepo.kernel.api.exception.RepositoryRuntimeException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

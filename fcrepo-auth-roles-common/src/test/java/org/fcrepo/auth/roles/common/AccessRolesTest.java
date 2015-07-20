@@ -44,9 +44,9 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
-import org.fcrepo.kernel.models.FedoraResource;
-import org.fcrepo.kernel.exception.RepositoryRuntimeException;
-import org.fcrepo.kernel.services.NodeService;
+import org.fcrepo.kernel.api.models.FedoraResource;
+import org.fcrepo.kernel.api.exception.RepositoryRuntimeException;
+import org.fcrepo.kernel.api.services.NodeService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
