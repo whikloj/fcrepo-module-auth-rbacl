@@ -10,6 +10,12 @@
   <name>Fedora Repository Authorization Roles Module</name>
   <description>This module is a role-based access control plugin for the Fedora Repository.</description>
 
+  <properties>
+    <osgi.import.packages/>
+    <osgi.private.packages/>
+    <osgi.export.packages/>
+  </properties>
+
   <repositories>
     <repository>
       <id>snapshots-repo</id>
@@ -216,6 +222,16 @@
         <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
+          <extensions>true</extensions>
+          <configuration>
+            <instructions>
+              <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+              <Export-Package>${osgi.export.packages}</Export-Package>
+              <Import-Package>${osgi.import.packages}</Import-Package>
+              <Private-Package>${osgi.private.packages}</Private-Package>
+              <Embed-Transitive>true</Embed-Transitive>
+            </instructions>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
