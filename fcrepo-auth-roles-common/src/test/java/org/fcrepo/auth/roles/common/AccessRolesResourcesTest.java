@@ -28,11 +28,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.core.UriInfo;
 
-import org.fcrepo.kernel.FedoraJcrTypes;
-import org.fcrepo.kernel.models.FedoraResource;
-import org.fcrepo.kernel.RdfLexicon;
-import org.fcrepo.kernel.identifiers.IdentifierConverter;
-import org.fcrepo.kernel.impl.rdf.impl.DefaultIdentifierTranslator;
+import org.fcrepo.kernel.api.FedoraJcrTypes;
+import org.fcrepo.kernel.api.RdfLexicon;
+import org.fcrepo.kernel.api.identifiers.IdentifierConverter;
+import org.fcrepo.kernel.api.models.FedoraResource;
+import org.fcrepo.kernel.modeshape.rdf.impl.DefaultIdentifierTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

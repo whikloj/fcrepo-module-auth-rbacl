@@ -23,11 +23,11 @@ import javax.jcr.RepositoryException;
 import javax.ws.rs.core.UriInfo;
 
 import org.fcrepo.http.commons.api.rdf.UriAwareResourceModelFactory;
-import org.fcrepo.kernel.FedoraJcrTypes;
-import org.fcrepo.kernel.models.FedoraResource;
-import org.fcrepo.kernel.RdfLexicon;
-import org.fcrepo.kernel.exception.RepositoryRuntimeException;
-import org.fcrepo.kernel.identifiers.IdentifierConverter;
+import org.fcrepo.kernel.api.FedoraJcrTypes;
+import org.fcrepo.kernel.api.RdfLexicon;
+import org.fcrepo.kernel.api.exception.RepositoryRuntimeException;
+import org.fcrepo.kernel.api.identifiers.IdentifierConverter;
+import org.fcrepo.kernel.api.models.FedoraResource;
 import org.springframework.stereotype.Component;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -45,8 +45,8 @@ public class AccessRolesResources implements UriAwareResourceModelFactory {
     /*
      * (non-Javadoc)
      * @see org.fcrepo.http.commons.api.rdf.UriAwareResourceModelFactory#
-     * createModelForResource( org.fcrepo.kernel.FedoraResourceImpl,
-     * javax.ws.rs.core.UriInfo, org.fcrepo.kernel.rdf.IdentifierTranslator)
+     * createModelForResource( org.fcrepo.kernel.api.FedoraResourceImpl,
+     * javax.ws.rs.core.UriInfo, org.fcrepo.kernel.api.rdf.IdentifierTranslator)
      */
     @Override
     public Model createModelForResource(final FedoraResource resource,
