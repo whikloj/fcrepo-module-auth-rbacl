@@ -194,9 +194,13 @@ public abstract class AbstractRolesIT {
     }
 
 
-    public int canAddChild(final String username, final String path,
+    public int canAddChild(final String username, final String objectPath,
                         final String childName, final boolean is_authenticated)
             throws IOException {
+        final String path = (null != objectPath && objectPath.endsWith("/")) ?
+                objectPath.substring(0, objectPath.length() - 1) :
+                objectPath;
+
         final HttpPut method =
                 putObjMethod(path + "/" + childName);
         if (is_authenticated) {
@@ -295,8 +299,11 @@ public abstract class AbstractRolesIT {
 
     protected HttpPut putDSMethod(final String objectPath, final String ds,
             final String content) throws UnsupportedEncodingException {
-        final HttpPut put =
-                new HttpPut(serverAddress + objectPath + "/" + ds);
+        final String path = (null != objectPath && objectPath.endsWith("/")) ?
+                objectPath.substring(0, objectPath.length() - 1) :
+                objectPath;
+
+        final HttpPut put = new HttpPut(serverAddress + path + "/" + ds);
         put.setEntity(new StringEntity(content));
         logger.debug("PUT: {}", put.getURI());
         return put;
