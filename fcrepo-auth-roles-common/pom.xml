@@ -9,6 +9,33 @@
   <artifactId>fcrepo-auth-roles-common</artifactId>
   <name>Fedora Repository Authorization Roles Commons</name>
   <description>This module adds access roles to the repository tree. It creates a REST/JSON API for post and get of access roles on Fedora objects and datastreams. It supports the querying of effective roles by authorization delegates.</description>
+  <packaging>bundle</packaging>
+
+  <properties>
+    <osgi.import.packages>
+      org.fcrepo.auth.common,
+      org.fcrepo.http.commons.*,
+      org.fcrepo.kernel.api.*,
+      org.fcrepo.kernel.modeshape.*,
+
+      javax.jcr,
+      javax.servlet.http.*,
+
+      com.codahale.metrics.annotation,
+      com.google.common.*,
+      com.hp.hpl.jena.*,
+
+      org.modeshape.jcr.*,
+      org.springframework.beans.*,
+      org.springframework.context.annotation,
+      org.springframework.stereotype,
+      
+      *,
+    </osgi.import.packages>
+    <osgi.export.packages>
+      org.fcrepo.auth.roles.common;version=${project.version}
+    </osgi.export.packages>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -124,6 +151,11 @@
 
       <plugin>
       	<artifactId>maven-failsafe-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
       </plugin>
 
       <plugin>
