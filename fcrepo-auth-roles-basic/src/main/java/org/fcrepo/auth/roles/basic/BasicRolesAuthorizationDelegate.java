@@ -15,6 +15,7 @@
  */
 package org.fcrepo.auth.roles.basic;
 
+import java.security.Principal;
 import java.util.Set;
 
 import javax.jcr.Session;
@@ -27,6 +28,25 @@ import org.slf4j.LoggerFactory;
  * @author Gregory Jansen
  */
 public class BasicRolesAuthorizationDelegate extends AbstractRolesAuthorizationDelegate {
+
+    public static final String EVERYONE_NAME = "EVERYONE";
+
+    /**
+     * The security principal for every request, that represents the "EVERYONE" user.
+     */
+    private static final Principal EVERYONE = new Principal() {
+
+        @Override
+        public String getName() {
+            return BasicRolesAuthorizationDelegate.EVERYONE_NAME;
+        }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
+
+    };
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(BasicRolesAuthorizationDelegate.class);
@@ -71,8 +91,16 @@ public class BasicRolesAuthorizationDelegate extends AbstractRolesAuthorizationD
             return false;
         }
         LOGGER.error("There are roles in session that aren't recognized by this authorization delegate: {}",
-                     roles);
+                roles);
         return false;
+    }
+
+    /**
+     * Get the principal that represents the "EVERYONE" user.
+     */
+    @Override
+    public Principal getEveryonePrincipal() {
+        return EVERYONE;
     }
 
 }
