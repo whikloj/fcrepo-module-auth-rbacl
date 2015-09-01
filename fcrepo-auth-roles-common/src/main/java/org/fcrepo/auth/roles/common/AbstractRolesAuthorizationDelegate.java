@@ -28,8 +28,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.fcrepo.auth.common.FedoraAuthorizationDelegate;
+import org.fcrepo.auth.common.FedoraUserSecurityContext;
 import org.fcrepo.http.commons.session.SessionFactory;
 import org.fcrepo.kernel.api.exception.RepositoryRuntimeException;
+
 import org.modeshape.jcr.value.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,6 +139,12 @@ public abstract class AbstractRolesAuthorizationDelegate implements FedoraAuthor
         }
         return true;
     }
+
+    @Override
+    public FedoraUserSecurityContext getFedoraUserSecurityContext(final Principal userPrincipal) {
+        return new FedoraUserSecurityContext(userPrincipal, this);
+    }
+
 
     private static Principal getUserPrincipal(final Session session) {
         final Object value = session.getAttribute(FEDORA_USER_PRINCIPAL);
