@@ -195,21 +195,21 @@ public abstract class AbstractRolesIT {
 
 
     public int canAddChild(final String username, final String objectPath,
-                        final String childName, final boolean is_authenticated)
-            throws IOException {
+            final String childName, final boolean is_authenticated)
+                    throws IOException {
         final String path = (null != objectPath && objectPath.endsWith("/")) ?
                 objectPath.substring(0, objectPath.length() - 1) :
-                objectPath;
+                    objectPath;
 
-        final HttpPut method =
-                putObjMethod(path + "/" + childName);
-        if (is_authenticated) {
-            setAuth(method, username);
-        }
-        final HttpResponse response = client.execute(method);
-        final int status = response.getStatusLine().getStatusCode();
-        logger.debug("canAddChild REST response status code:  {}", status);
-        return status;
+                final HttpPut method =
+                        putObjMethod(path + "/" + childName);
+                if (is_authenticated) {
+                    setAuth(method, username);
+                }
+                final HttpResponse response = client.execute(method);
+                final int status = response.getStatusLine().getStatusCode();
+                logger.debug("canAddChild REST response status code:  {}", status);
+                return status;
     }
 
     public int canGetRoles(final String username, final String path,
@@ -301,12 +301,12 @@ public abstract class AbstractRolesIT {
             final String content) throws UnsupportedEncodingException {
         final String path = (null != objectPath && objectPath.endsWith("/")) ?
                 objectPath.substring(0, objectPath.length() - 1) :
-                objectPath;
+                    objectPath;
 
-        final HttpPut put = new HttpPut(serverAddress + path + "/" + ds);
-        put.setEntity(new StringEntity(content));
-        logger.debug("PUT: {}", put.getURI());
-        return put;
+                final HttpPut put = new HttpPut(serverAddress + path + "/" + ds);
+                put.setEntity(new StringEntity(content));
+                logger.debug("PUT: {}", put.getURI());
+                return put;
     }
 
     protected HttpPost postRolesMethod(final String param) {
@@ -359,7 +359,7 @@ public abstract class AbstractRolesIT {
         return postRoles(path, json_roles, "application/json");
     }
     protected int postRoles(final String path, final String json_roles, final String contentType )
-        throws ParseException, IOException {
+            throws ParseException, IOException {
         final HttpPost method = postRolesMethod(path);
         setAuth(method, "fedoraAdmin");
         method.addHeader("Content-Type", contentType);
@@ -385,8 +385,8 @@ public abstract class AbstractRolesIT {
         logger.debug("content: {}", content);
         final ObjectMapper mapper = new ObjectMapper();
         final Map<String, List<String>> result =
-            mapper.readValue(content,
-                    new TypeReference<Map<String, List<String>>>() {});
+                mapper.readValue(content,
+                        new TypeReference<Map<String, List<String>>>() {});
         return result;
     }
 
@@ -403,8 +403,8 @@ public abstract class AbstractRolesIT {
         logger.debug("content: {}", content);
         final ObjectMapper mapper = new ObjectMapper();
         final Map<String, List<String>> result =
-            mapper.readValue(content,
-                    new TypeReference<Map<String, List<String>>>() {});
+                mapper.readValue(content,
+                        new TypeReference<Map<String, List<String>>>() {});
         return result;
     }
 
@@ -421,7 +421,7 @@ public abstract class AbstractRolesIT {
             final HttpResponse response = client.execute(method);
 
             assertEquals("Didn't get a DELETED response! Got content:\n" + EntityUtils.toString(response.getEntity()),
-                         response.getStatusLine().getStatusCode(), NO_CONTENT.getStatusCode());
+                    response.getStatusLine().getStatusCode(), NO_CONTENT.getStatusCode());
 
         } catch (final Throwable ignored) {
             logger.debug("object {} doesn't exist -- not deleting", path);
@@ -460,7 +460,7 @@ public abstract class AbstractRolesIT {
 
 
 
-    private static void setAuth(final AbstractHttpMessage method, final String username) {
+    protected static void setAuth(final AbstractHttpMessage method, final String username) {
         final String creds = username + ":password";
         // in test configuration we don't need real passwords
         final String encCreds =
