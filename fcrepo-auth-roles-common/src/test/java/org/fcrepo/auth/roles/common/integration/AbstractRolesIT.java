@@ -501,7 +501,7 @@ public abstract class AbstractRolesIT {
         }
     }
 
-    private void addDatastreamACLs(
+    protected void addDatastreamACLs(
             final RolesFadTestObjectBean obj,
             final String dsid) throws Exception {
         if (obj.getDatastreamACLs(dsid) != null) {
