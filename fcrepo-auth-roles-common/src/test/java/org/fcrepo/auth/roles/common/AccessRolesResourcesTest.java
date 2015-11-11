@@ -28,7 +28,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.core.UriInfo;
 
-import org.fcrepo.kernel.api.FedoraJcrTypes;
+import org.fcrepo.kernel.api.FedoraTypes;
 import org.fcrepo.kernel.api.RdfLexicon;
 import org.fcrepo.kernel.api.identifiers.IdentifierConverter;
 import org.fcrepo.kernel.api.models.FedoraResource;
@@ -88,7 +88,7 @@ public class AccessRolesResourcesTest {
             throws RepositoryException {
 
         when(fedoraResource.getPath()).thenReturn("/" + pathString);
-        when(resourceNode.isNodeType(eq(FedoraJcrTypes.FEDORA_RESOURCE)))
+        when(resourceNode.isNodeType(eq(FedoraTypes.FEDORA_RESOURCE)))
                 .thenReturn(false);
 
         final Model model =
@@ -101,7 +101,7 @@ public class AccessRolesResourcesTest {
     @Test
     public void testCreateModelForResource() throws RepositoryException {
 
-        when(resourceNode.isNodeType(eq(FedoraJcrTypes.FEDORA_RESOURCE)))
+        when(resourceNode.isNodeType(eq(FedoraTypes.FEDORA_RESOURCE)))
                 .thenReturn(true);
 
         when(fedoraResource.getPath()).thenReturn("/" + pathString);

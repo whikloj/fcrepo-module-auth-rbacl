@@ -23,7 +23,7 @@ import javax.jcr.RepositoryException;
 import javax.ws.rs.core.UriInfo;
 
 import org.fcrepo.http.commons.api.rdf.UriAwareResourceModelFactory;
-import org.fcrepo.kernel.api.FedoraJcrTypes;
+import org.fcrepo.kernel.api.FedoraTypes;
 import org.fcrepo.kernel.api.RdfLexicon;
 import org.fcrepo.kernel.api.exception.RepositoryRuntimeException;
 import org.fcrepo.kernel.api.identifiers.IdentifierConverter;
@@ -57,7 +57,7 @@ public class AccessRolesResources implements UriAwareResourceModelFactory {
             final Resource s = graphSubjects.reverse().convert(resource);
 
             if (resource.getNode().isNodeType(
-                    FedoraJcrTypes.FEDORA_RESOURCE)) {
+                    FedoraTypes.FEDORA_RESOURCE)) {
                 final Map<String, String> pathMap =
                         singletonMap("path", resource.getPath().substring(1));
                 final Resource acl = model.createResource(uriInfo.getBaseUriBuilder().path(
