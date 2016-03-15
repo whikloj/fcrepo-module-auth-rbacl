@@ -17,7 +17,7 @@ package org.fcrepo.auth.roles.common;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -134,7 +134,7 @@ public class AccessRoles extends AbstractResource {
                 node = resource().getNode();
             }
 
-            final Map<String, List<String>> data =
+            final Map<String, Collection<String>> data =
                     this.getAccessRolesProvider().getRoles(node,
                             (effective != null));
             if (data == null) {

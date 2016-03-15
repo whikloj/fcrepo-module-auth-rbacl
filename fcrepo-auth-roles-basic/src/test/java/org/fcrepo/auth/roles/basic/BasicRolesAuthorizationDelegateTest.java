@@ -38,8 +38,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -107,15 +107,15 @@ public class BasicRolesAuthorizationDelegateTest {
 
         // ACLs for paths
 
-        final Map<String, List<String>> adminAcl =
+        final Map<String, Collection<String>> adminAcl =
                 singletonMap("user", asList("admin"));
-        final Map<String, List<String>> writerAcl =
+        final Map<String, Collection<String>> writerAcl =
                 singletonMap("user", asList("writer"));
-        final Map<String, List<String>> readerAcl =
+        final Map<String, Collection<String>> readerAcl =
                 singletonMap("user", asList("reader"));
-        final Map<String, List<String>> emptyAcl =
+        final Map<String, Collection<String>> emptyAcl =
                 singletonMap("user", Collections.<String>emptyList());
-        final Map<String, List<String>> unrecognizableAcl =
+        final Map<String, Collection<String>> unrecognizableAcl =
                 singletonMap("user", asList("something_else"));
 
         when(accessRolesProvider.findRolesForPath(adminablePath, mockSession))

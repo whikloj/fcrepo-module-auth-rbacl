@@ -16,8 +16,8 @@
 package org.fcrepo.auth.roles.common;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -61,14 +61,14 @@ public class RbAclAccessRolesProvider implements AccessRolesProvider {
      * {@inheritDoc}
      */
     @Override
-    public Map<String, List<String>> getRoles(final Node node, final boolean effective) {
+    public Map<String, Collection<String>> getRoles(final Node node, final boolean effective) {
         try {
             LOGGER.debug("Finding roles for: {}, effective={}", node.getPath(), effective);
         } catch (final RepositoryException e) {
             LOGGER.debug("Unable to get path! {}", e.getMessage());
         }
 
-        final Map<String, List<String>> data = new HashMap<>();
+        final Map<String, Collection<String>> data = new HashMap<>();
         try {
 
             final Session session = node.getSession();
@@ -86,7 +86,7 @@ public class RbAclAccessRolesProvider implements AccessRolesProvider {
                             }
                             getAssignments(n, data);
                             if (LOGGER.isDebugEnabled()) {
-                                for (final Map.Entry<String, List<String>> entry : data.entrySet()) {
+                                for (final Map.Entry<String, Collection<String>> entry : data.entrySet()) {
                                     LOGGER.debug("{} has role(s) {}", entry.getKey(), entry.getValue());
                                 }
                             }
@@ -109,7 +109,7 @@ public class RbAclAccessRolesProvider implements AccessRolesProvider {
      * @param data
      * @throws RepositoryException
      */
-    private void getAssignments(final Node node, final Map<String, List<String>> data)
+    private void getAssignments(final Node node, final Map<String, Collection<String>> data)
         throws RepositoryException {
 
         if (node.isNodeType(rbaclAssignable.getQualified())) {
@@ -126,7 +126,7 @@ public class RbAclAccessRolesProvider implements AccessRolesProvider {
                         LOGGER.warn("found empty principal name on node {}",
                                     node.getPath());
                     } else {
-                        List<String> roles = data.get(principalName);
+                        Collection<String> roles = data.get(principalName);
                         if (roles == null) {
                             roles = new ArrayList<>();
                             data.put(principalName, roles);
@@ -205,7 +205,7 @@ public class RbAclAccessRolesProvider implements AccessRolesProvider {
      * {@inheritDoc}
      */
     @Override
-    public Map<String, List<String>> findRolesForPath(final Path absPath,
+    public Map<String, Collection<String>> findRolesForPath(final Path absPath,
             final Session session) throws RepositoryException {
         Node node = null;
         for (Path p = absPath; p != null; p = p.getParent()) {
