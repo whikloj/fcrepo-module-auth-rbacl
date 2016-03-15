@@ -39,7 +39,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import java.security.Principal;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -111,9 +111,9 @@ public class BasicRolesAuthorizationDelegateRemoveChildrenRecursiveTest {
 
         // ACLs for paths and nodes
 
-        final Map<String, List<String>> writerAcl =
+        final Map<String, Collection<String>> writerAcl =
                 singletonMap("user", asList("writer"));
-        final Map<String, List<String>> readerAcl =
+        final Map<String, Collection<String>> readerAcl =
                 singletonMap("user", asList("reader"));
 
         when(accessRolesProvider.findRolesForPath(parentPath, mockSession))

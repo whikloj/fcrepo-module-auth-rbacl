@@ -17,7 +17,7 @@ package org.fcrepo.auth.roles.common;
 
 import static java.util.Collections.emptyMap;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,7 +35,7 @@ import org.modeshape.jcr.value.Path;
  */
 public interface AccessRolesProvider {
 
-    public static final Map<String, List<String>> DEFAULT_ACCESS_ROLES = emptyMap();
+    public static final Map<String, Collection<String>> DEFAULT_ACCESS_ROLES = emptyMap();
 
     /**
      * Get the roles assigned to this Node. Optionally search up the tree for the effective roles.
@@ -44,7 +44,7 @@ public interface AccessRolesProvider {
      * @param effective if true then search for effective roles
      * @return a set of roles for each principal
      */
-    public Map<String, List<String>> getRoles(final Node node, final boolean effective);
+    public Map<String, Collection<String>> getRoles(final Node node, final boolean effective);
 
     /**
      * Assigns the given set of roles to each principal.
@@ -72,7 +72,7 @@ public interface AccessRolesProvider {
      * @return the roles assigned to each principal
      * @throws RepositoryException if PathNotFoundException can not handle
      */
-    public Map<String, List<String>> findRolesForPath(final Path absPath,
+    public Map<String, Collection<String>> findRolesForPath(final Path absPath,
             final Session session) throws RepositoryException;
 
 }

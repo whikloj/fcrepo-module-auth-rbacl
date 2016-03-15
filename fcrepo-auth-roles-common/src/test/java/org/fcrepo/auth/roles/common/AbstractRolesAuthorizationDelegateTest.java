@@ -26,9 +26,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import java.security.Principal;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,7 +52,7 @@ public class AbstractRolesAuthorizationDelegateTest {
 
     @Test
     public void shouldGatherEffectiveRolesFromMultiplePrincipals() {
-        final Map<String, List<String>> acl = new HashMap<>();
+        final Map<String, Collection<String>> acl = new HashMap<>();
         acl.put("a", asList("reader", "writer"));
         acl.put("b", asList("admin"));
 
@@ -75,7 +75,7 @@ public class AbstractRolesAuthorizationDelegateTest {
 
     @Test
     public void shouldHandleUnmatchedRoles() {
-        final Map<String, List<String>> acl = new HashMap<>();
+        final Map<String, Collection<String>> acl = new HashMap<>();
         final Set<Principal> principals = new HashSet<>();
         principals.add(principalA);
 

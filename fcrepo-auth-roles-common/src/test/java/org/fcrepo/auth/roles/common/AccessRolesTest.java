@@ -30,9 +30,9 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -71,7 +71,7 @@ public class AccessRolesTest {
     private FedoraResource fedoraResource;
 
     @Mock
-    private Map<String, List<String>> rolesData;
+    private Map<String, Collection<String>> rolesData;
 
     @Mock
     private PathSegment rootPath;

@@ -15,10 +15,11 @@
  */
 package org.fcrepo.auth.roles.common;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.security.Principal;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,18 +63,13 @@ public abstract class AbstractRolesAuthorizationDelegate implements FedoraAuthor
      * @param principals effective principals
      * @return set of effective content roles
      */
-    public static Set<String>
-    resolveUserRoles(final Map<String, List<String>> acl,
-                    final Set<Principal> principals) {
-        final Set<String> roles = new HashSet<>();
-        for (final Principal p : principals) {
-            final List<String> matchedRoles = acl.get(p.getName());
-            if (matchedRoles != null) {
-                LOGGER.debug("request principal matched role assignment: {}", p.getName());
-                roles.addAll(matchedRoles);
-            }
-        }
-        return roles;
+    public static Set<String> resolveUserRoles(final Map<String, Collection<String>> acl,
+                    final Collection<Principal> principals) {
+        return principals.stream().map(Principal::getName).filter(acl::containsKey)
+            .peek(principal -> LOGGER.debug("request principal matched role assignment: {}", principal))
+            .map(acl::get)
+            .flatMap(Collection::stream)
+            .collect(toSet());
     }
 
     @Override
@@ -100,7 +96,7 @@ public abstract class AbstractRolesAuthorizationDelegate implements FedoraAuthor
 
         try {
             final Session internalSession = sessionFactory.getInternalSession();
-            final Map<String, List<String>> acl =
+            final Map<String, Collection<String>> acl =
                     accessRolesProvider.findRolesForPath(absPath,
                             internalSession);
             roles = resolveUserRoles(acl, allPrincipals);
@@ -179,7 +175,7 @@ public abstract class AbstractRolesAuthorizationDelegate implements FedoraAuthor
                 final Node n = ni.nextNode();
                 // are there unique roles?
                 final Set<String> roles;
-                final Map<String, List<String>> acl = accessRolesProvider.getRoles(n, false);
+                final Map<String, Collection<String>> acl = accessRolesProvider.getRoles(n, false);
 
                 if (acl != null) {
                     roles = resolveUserRoles(acl, allPrincipals);

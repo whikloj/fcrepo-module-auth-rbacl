@@ -34,9 +34,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -122,7 +122,7 @@ public class AccessRolesProviderTest {
         rbaclIterator = nodeIterator();
         when(rbaclNode.getNodes()).thenReturn(rbaclIterator);
 
-        final Map<String, List<String>> data = provider.getRoles(node, true);
+        final Map<String, Collection<String>> data = provider.getRoles(node, true);
 
         assertTrue(
                 "Role response for node with no rbacl nodes should be empty",
@@ -137,7 +137,7 @@ public class AccessRolesProviderTest {
 
         when(principalProperty1.getString()).thenReturn(null);
 
-        final Map<String, List<String>> data = provider.getRoles(node, true);
+        final Map<String, Collection<String>> data = provider.getRoles(node, true);
 
         assertTrue(
                 "Role response for node with an rbacl nodes containing no principal names should be empty",
@@ -151,7 +151,7 @@ public class AccessRolesProviderTest {
 
         when(principalProperty1.getString()).thenReturn("");
 
-        final Map<String, List<String>> data = provider.getRoles(node, true);
+        final Map<String, Collection<String>> data = provider.getRoles(node, true);
 
         assertTrue(
                 "Role response for node with an rbacl nodes containing no principal names should be empty",
@@ -164,7 +164,7 @@ public class AccessRolesProviderTest {
 
         when(node.getNode(anyString())).thenThrow(new PathNotFoundException());
 
-        final Map<String, List<String>> data = provider.getRoles(node, true);
+        final Map<String, Collection<String>> data = provider.getRoles(node, true);
 
         assertTrue("Roles data must be empty when rbacl path is not found",
                 data.isEmpty());
@@ -174,7 +174,7 @@ public class AccessRolesProviderTest {
     public void testGetRolesNotAssignableNotEffective()
             throws RepositoryException {
 
-        final Map<String, List<String>> data = provider.getRoles(node, false);
+        final Map<String, Collection<String>> data = provider.getRoles(node, false);
 
         assertNull(
                 "Role data should be null when retrieving from a non-assignable node",
@@ -184,7 +184,7 @@ public class AccessRolesProviderTest {
     @Test
     public void testGetRolesEffectiveNoParent() throws RepositoryException {
 
-        final Map<String, List<String>> data = provider.getRoles(node, true);
+        final Map<String, Collection<String>> data = provider.getRoles(node, true);
 
         assertNull(
                 "Role data should be null when retrieving from non-assignable node with no parent",
@@ -200,7 +200,7 @@ public class AccessRolesProviderTest {
 
         when(node.getParent()).thenReturn(parentNode1);
 
-        final Map<String, List<String>> data = provider.getRoles(node, true);
+        final Map<String, Collection<String>> data = provider.getRoles(node, true);
 
         assertNull(
                 "Role data should be null when a node and all its ancestors are not assignable",
@@ -214,7 +214,7 @@ public class AccessRolesProviderTest {
 
         when(node.getParent()).thenThrow(new ItemNotFoundException());
 
-        final Map<String, List<String>> data = provider.getRoles(node, true);
+        final Map<String, Collection<String>> data = provider.getRoles(node, true);
 
         assertTrue(
                 "Result role data should be the default access roles object",
@@ -232,13 +232,13 @@ public class AccessRolesProviderTest {
 
         when(node.getParent()).thenReturn(parentNode1);
 
-        final Map<String, List<String>> data = provider.getRoles(node, true);
+        final Map<String, Collection<String>> data = provider.getRoles(node, true);
 
         assertEquals("One principal should be retrieved", 1, data.size());
         assertTrue("Data did not contain principal", data
                 .containsKey("principal"));
-        assertEquals("Role for principal did not match", "role", data.get(
-                "principal").get(0));
+        assertTrue("Role for principal did not match", data.get(
+                "principal").contains("role"));
     }
 
     @Test
@@ -257,13 +257,13 @@ public class AccessRolesProviderTest {
 
         when(node.getParent()).thenReturn(parentNode2);
 
-        final Map<String, List<String>> data = provider.getRoles(node, true);
+        final Map<String, Collection<String>> data = provider.getRoles(node, true);
 
         assertEquals("One principal should be retrieved", 1, data.size());
         assertTrue("Data did not contain principal", data
                 .containsKey("principal"));
-        assertEquals("Role for principal did not match", "role", data.get(
-                "principal").get(0));
+        assertTrue("Role for principal did not match", data.get(
+                "principal").contains("role"));
     }
 
     @Test
@@ -285,7 +285,7 @@ public class AccessRolesProviderTest {
 
         when(node.getParent()).thenReturn(parentNode2);
 
-        final Map<String, List<String>> data = provider.getRoles(node, true);
+        final Map<String, Collection<String>> data = provider.getRoles(node, true);
 
         assertEquals("One principal should be retrieved", 1, data.size());
         assertTrue("Data did not contain principal", data
@@ -319,7 +319,7 @@ public class AccessRolesProviderTest {
 
         when(node.getParent()).thenReturn(parentNode1);
 
-        final Map<String, List<String>> data = provider.getRoles(node, true);
+        final Map<String, Collection<String>> data = provider.getRoles(node, true);
 
         assertEquals("One principal should be retrieved", 1, data.size());
         assertTrue("Data did not contain principal", data
@@ -353,7 +353,7 @@ public class AccessRolesProviderTest {
 
         when(node.getParent()).thenReturn(parentNode1);
 
-        final Map<String, List<String>> data = provider.getRoles(node, true);
+        final Map<String, Collection<String>> data = provider.getRoles(node, true);
 
         assertEquals("One principal should be retrieved", 2, data.size());
         assertTrue("Data did not contain principal", data
@@ -383,7 +383,7 @@ public class AccessRolesProviderTest {
         when(principalNode1.getProperty(eq(role.getQualified())))
                 .thenReturn(roleProperty);
 
-        final Map<String, List<String>> data = provider.getRoles(node, true);
+        final Map<String, Collection<String>> data = provider.getRoles(node, true);
 
         assertEquals("Data should contain one principal", 1, data.size());
         assertEquals("Principal should not contain any roles", 0, data.get(
@@ -407,7 +407,7 @@ public class AccessRolesProviderTest {
         when(principalNode1.getProperty(eq(JcrName.role.getQualified())))
                 .thenReturn(roleProperty);
 
-        final Map<String, List<String>> data = provider.getRoles(node, true);
+        final Map<String, Collection<String>> data = provider.getRoles(node, true);
 
         assertEquals("Data should contain one principal", 1, data.size());
         assertEquals("Principal should not contain any roles", 0, data.get(
@@ -562,7 +562,7 @@ public class AccessRolesProviderTest {
                 .thenReturn(false);
         when(node.getParent()).thenReturn(null);
 
-        final Map<String, List<String>> data =
+        final Map<String, Collection<String>> data =
                 provider.findRolesForPath(path, session);
 
         assertNull("Unassignable root should return no role data", data);
@@ -592,7 +592,7 @@ public class AccessRolesProviderTest {
 
         when(node.getParent()).thenReturn(parentNode);
 
-        final Map<String, List<String>> data =
+        final Map<String, Collection<String>> data =
                 provider.findRolesForPath(path, session);
 
         // Verify lookup of node by path
@@ -625,7 +625,7 @@ public class AccessRolesProviderTest {
 
         when(node.getNode(anyString())).thenReturn(rbaclNode);
 
-        final Map<String, List<String>> data =
+        final Map<String, Collection<String>> data =
                 provider.findRolesForPath(path, session);
 
         // Verify lookup of node by path
