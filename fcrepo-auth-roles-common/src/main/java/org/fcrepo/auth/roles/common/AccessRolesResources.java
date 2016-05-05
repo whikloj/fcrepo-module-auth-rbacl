@@ -19,13 +19,11 @@ import static java.util.Collections.singletonMap;
 
 import java.util.Map;
 
-import javax.jcr.RepositoryException;
 import javax.ws.rs.core.UriInfo;
 
 import org.fcrepo.http.commons.api.rdf.UriAwareResourceModelFactory;
 import org.fcrepo.kernel.api.FedoraTypes;
 import org.fcrepo.kernel.api.RdfLexicon;
-import org.fcrepo.kernel.api.exception.RepositoryRuntimeException;
 import org.fcrepo.kernel.api.identifiers.IdentifierConverter;
 import org.fcrepo.kernel.api.models.FedoraResource;
 import org.springframework.stereotype.Component;
@@ -52,20 +50,14 @@ public class AccessRolesResources implements UriAwareResourceModelFactory {
     public Model createModelForResource(final FedoraResource resource,
             final UriInfo uriInfo, final IdentifierConverter<Resource, FedoraResource> graphSubjects) {
         final Model model = ModelFactory.createDefaultModel();
+        final Resource s = graphSubjects.reverse().convert(resource);
 
-        try {
-            final Resource s = graphSubjects.reverse().convert(resource);
-
-            if (resource.getNode().isNodeType(
-                    FedoraTypes.FEDORA_RESOURCE)) {
-                final Map<String, String> pathMap =
-                        singletonMap("path", resource.getPath().substring(1));
-                final Resource acl = model.createResource(uriInfo.getBaseUriBuilder().path(
-                        AccessRoles.class).buildFromMap(pathMap).toASCIIString());
-                model.add(s, RdfLexicon.HAS_ACCESS_ROLES_SERVICE, acl);
-            }
-        } catch (final RepositoryException e) {
-            throw new RepositoryRuntimeException(e);
+        if (resource.hasType(FedoraTypes.FEDORA_RESOURCE)) {
+            final Map<String, String> pathMap =
+                    singletonMap("path", resource.getPath().substring(1));
+            final Resource acl = model.createResource(uriInfo.getBaseUriBuilder().path(
+                    AccessRoles.class).buildFromMap(pathMap).toASCIIString());
+            model.add(s, RdfLexicon.HAS_ACCESS_ROLES_SERVICE, acl);
         }
         return model;
     }
