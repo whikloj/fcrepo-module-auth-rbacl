@@ -16,6 +16,7 @@
 package org.fcrepo.auth.roles.common;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.fcrepo.kernel.modeshape.utils.FedoraTypesUtils.getJcrNode;
 
 import java.util.Collection;
 import java.util.Map;
@@ -129,9 +130,9 @@ public class AccessRoles extends AbstractResource {
             final Node node;
 
             if (resource instanceof FedoraBinary) {
-                node = ((FedoraBinary) resource()).getDescription().getNode();
+                node = getJcrNode(((FedoraBinary) resource()).getDescription());
             } else {
-                node = resource().getNode();
+                node = getJcrNode(resource());
             }
 
             final Map<String, Collection<String>> data =
@@ -170,9 +171,9 @@ public class AccessRoles extends AbstractResource {
             final FedoraResource resource = resource();
 
             if (resource instanceof FedoraBinary) {
-                this.getAccessRolesProvider().postRoles(((FedoraBinary) resource).getDescription().getNode(), data);
+                this.getAccessRolesProvider().postRoles(getJcrNode(((FedoraBinary) resource).getDescription()), data);
             } else {
-                this.getAccessRolesProvider().postRoles(resource.getNode(), data);
+                this.getAccessRolesProvider().postRoles(getJcrNode(resource), data);
             }
             session.save();
             LOGGER.debug("Saved access roles {}", data);
@@ -228,9 +229,9 @@ public class AccessRoles extends AbstractResource {
             final Node node;
 
             if (resource instanceof FedoraBinary) {
-                node = ((FedoraBinary) resource()).getDescription().getNode();
+                node = getJcrNode(((FedoraBinary) resource()).getDescription());
             } else {
-                node = resource().getNode();
+                node = getJcrNode(resource());
             }
 
             this.getAccessRolesProvider().deleteRoles(node);

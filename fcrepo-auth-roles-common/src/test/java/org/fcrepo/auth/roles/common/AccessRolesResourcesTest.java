@@ -32,6 +32,7 @@ import org.fcrepo.kernel.api.FedoraTypes;
 import org.fcrepo.kernel.api.RdfLexicon;
 import org.fcrepo.kernel.api.identifiers.IdentifierConverter;
 import org.fcrepo.kernel.api.models.FedoraResource;
+import org.fcrepo.kernel.modeshape.FedoraResourceImpl;
 import org.fcrepo.kernel.modeshape.rdf.impl.DefaultIdentifierTranslator;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +52,7 @@ public class AccessRolesResourcesTest {
     private IdentifierConverter<Resource, FedoraResource> graphSubjects;
 
     @Mock
-    private FedoraResource fedoraResource;
+    private FedoraResourceImpl fedoraResource;
 
     @Mock
     private Node resourceNode;
@@ -101,7 +102,7 @@ public class AccessRolesResourcesTest {
     @Test
     public void testCreateModelForResource() throws RepositoryException {
 
-        when(resourceNode.isNodeType(eq(FedoraTypes.FEDORA_RESOURCE)))
+        when(fedoraResource.hasType(eq(FedoraTypes.FEDORA_RESOURCE)))
                 .thenReturn(true);
 
         when(fedoraResource.getPath()).thenReturn("/" + pathString);
