@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -165,8 +166,13 @@ public abstract class AbstractRolesAuthorizationDelegate implements FedoraAuthor
         try {
             final Session internalSession = sessionFactory.getInternalSession();
             LOGGER.debug("Recursive child remove permission checks for: {}",
-                         parentPath);
-            final Node parent = internalSession.getNode(parentPath);
+                    parentPath);
+            final Item item = internalSession.getItem(parentPath);
+            if (!item.isNode()) {
+                // this is a property and has no children...
+                return true;
+            }
+            final Node parent = (Node) item;
             if (!parent.hasNodes()) {
                 return true;
             }

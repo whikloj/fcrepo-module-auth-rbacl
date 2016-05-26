@@ -139,20 +139,29 @@ public class BasicRolesAuthorizationDelegateRemoveChildrenRecursiveTest {
         // are actually defined below in the test cases.
 
         when(parentPath.toString()).thenReturn("parent");
+        when(mockSession.getItem("parent")).thenReturn(parentNode);
         when(mockSession.getNode("parent")).thenReturn(parentNode);
         when(parentNode.getPath()).thenReturn("parent");
+        when(parentNode.isNode()).thenReturn(true);
 
         when(writablePath.toString()).thenReturn("writable");
+        when(mockSession.getItem("writable")).thenReturn(writableNode);
         when(mockSession.getNode("writable")).thenReturn(writableNode);
         when(writableNode.getPath()).thenReturn("writable");
+        when(writableNode.isNode()).thenReturn(true);
 
         when(readablePath.toString()).thenReturn("readable");
+        when(mockSession.getItem("readable")).thenReturn(readableNode);
         when(mockSession.getNode("readable")).thenReturn(readableNode);
         when(readableNode.getPath()).thenReturn("readable");
+        when(readableNode.isNode()).thenReturn(true);
 
         when(noAclPath.toString()).thenReturn("noacl");
+        when(mockSession.getItem("noacl")).thenReturn(readableNode);
         when(mockSession.getNode("noacl")).thenReturn(noAclNode);
         when(noAclNode.getPath()).thenReturn("noacl");
+        when(noAclNode.isNode()).thenReturn(true);
+
     }
 
     @Test
