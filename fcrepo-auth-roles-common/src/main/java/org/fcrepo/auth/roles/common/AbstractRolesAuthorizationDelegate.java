@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -35,7 +36,6 @@ import org.fcrepo.kernel.api.exception.RepositoryRuntimeException;
 import org.modeshape.jcr.value.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Policy enforcement point for roles-based authentication
@@ -51,10 +51,10 @@ public abstract class AbstractRolesAuthorizationDelegate implements FedoraAuthor
 
     private static final String[] REMOVE_ACTIONS = {"remove"};
 
-    @Autowired
+    @Inject
     private AccessRolesProvider accessRolesProvider = null;
 
-    @Autowired
+    @Inject
     private SessionFactory sessionFactory = null;
 
     /**
