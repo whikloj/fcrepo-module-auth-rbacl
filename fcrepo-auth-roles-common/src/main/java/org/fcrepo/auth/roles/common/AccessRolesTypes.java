@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
@@ -29,7 +30,6 @@ import org.fcrepo.kernel.api.exception.RepositoryRuntimeException;
 import org.modeshape.jcr.api.nodetype.NodeTypeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,7 +42,7 @@ public class AccessRolesTypes {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(AccessRolesTypes.class);
 
-    @Autowired
+    @Inject
     private final SessionFactory sessionFactory = null;
 
     /**
