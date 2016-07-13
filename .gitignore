@@ -1,5 +1,6 @@
 *~
 target/
+fcrepo4-data
 
 # Eclipse specific files
 .settings
