@@ -72,7 +72,7 @@ public class AccessRoles extends AbstractResource {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(AccessRoles.class);
 
-    protected IdentifierConverter<Resource,FedoraResource> identifierTranslator;
+    protected IdentifierConverter<Resource, FedoraResource> identifierTranslator;
 
 
     @Inject
@@ -137,14 +137,19 @@ public class AccessRoles extends AbstractResource {
                 node = getJcrNode(resource());
             }
 
-            final Map<String, Collection<String>> data =
-                    this.getAccessRolesProvider().getRoles(node,
-                            (effective != null));
-            if (data == null) {
-                LOGGER.debug("no content response");
-                response = Response.noContent();
+            final AccessRolesProvider provider = this.getAccessRolesProvider();
+            if (provider == null) {
+                LOGGER.debug("accessRolesProvider is null");
+                response = Response.status(Status.NOT_FOUND);
             } else {
-                response = Response.ok(data);
+                final Map<String, Collection<String>> data =
+                        provider.getRoles(node, (effective != null));
+                if (data == null) {
+                    LOGGER.debug("no content response");
+                    response = Response.noContent();
+                } else {
+                    response = Response.ok(data);
+                }
             }
         } finally {
             session.logout();
@@ -163,7 +168,7 @@ public class AccessRoles extends AbstractResource {
     @Consumes(APPLICATION_JSON)
     @Timed
     public Response post(final Map<String, Set<String>> data)
-        throws RepositoryException {
+            throws RepositoryException {
         LOGGER.debug("POST Received request param: {}", request);
         Response.ResponseBuilder response;
 
@@ -257,7 +262,7 @@ public class AccessRoles extends AbstractResource {
     }
 
 
-    protected IdentifierConverter<Resource,FedoraResource> translator() {
+    protected IdentifierConverter<Resource, FedoraResource> translator() {
         if (identifierTranslator == null) {
             identifierTranslator = new HttpResourceConverter(session,
                     uriInfo.getBaseUriBuilder().clone().path("{path: .*}"));

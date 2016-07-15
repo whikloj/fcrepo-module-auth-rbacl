@@ -18,6 +18,9 @@
     <property name="fad" ref="fad"/>
   </bean>
   
+  <!-- Add the fcr:accessroles resource -->
+  <bean name="accessRolesResources" class="org.fcrepo.auth.roles.common.AccessRolesResources"/>
+  
   <bean name="fad" class="org.fcrepo.auth.roles.basic.BasicRolesAuthorizationDelegate"/>
 
     <bean class="org.modeshape.jcr.ModeShapeEngine" init-method="start"/>
